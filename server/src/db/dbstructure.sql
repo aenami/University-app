@@ -298,5 +298,28 @@ CREATE TABLE asistencia (
 );
 
 -- ============================================================
--- FIN DEL SCRIPT
+-- 24. PQR  (Peticiones, Quejas y Reclamos)
 -- ============================================================
+CREATE TABLE pqr (
+  id_pqr            INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  titulo_pqr        VARCHAR(150) NOT NULL,
+  descripcion_pqr   TEXT         NOT NULL,
+  estado_pqr        ENUM('pendiente','cerrada') NOT NULL DEFAULT 'pendiente',
+  fecha_creacion_pqr DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  id_usuario        INT UNSIGNED NOT NULL,
+  CONSTRAINT fk_pqr_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
+);
+
+-- ============================================================
+-- 25. PQR_RESPUESTA
+-- ============================================================
+CREATE TABLE pqr_respuesta (
+  id_respuesta              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  titulo_pqr_respuesta      VARCHAR(150) NOT NULL,
+  descripcion_pqr_respuesta TEXT         NOT NULL,
+  fecha_creacion_pqr_respuesta DATETIME  NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  id_administrador          INT UNSIGNED NOT NULL,
+  id_pqr                    INT UNSIGNED NOT NULL,
+  CONSTRAINT fk_pqrr_admin FOREIGN KEY (id_administrador) REFERENCES administrador(id_administrador),
+  CONSTRAINT fk_pqrr_pqr   FOREIGN KEY (id_pqr)           REFERENCES pqr(id_pqr)
+);
