@@ -4,8 +4,13 @@
     "target": "es2023",
     "lib": ["ES2023", "DOM"],
     "module": "esnext",
+<<<<<<< HEAD
     "skipLibCheck": true,
     "types": ["vite/client"],
+=======
+    "types": ["vite/client"],
+    "skipLibCheck": true,
+>>>>>>> 6e4b530e92deba2f0cfd8271a042996db67c4540
 
     /* Bundler mode */
     "moduleResolution": "bundler",

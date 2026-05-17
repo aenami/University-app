@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import express from "express"
 import dotenv from "dotenv"
 import cors from 'cors'
@@ -21,5 +22,34 @@ app.use(express.urlencoded({ extended: false }))
 app.use('/api/dashboard', dashboardRoutes)
 app.use('/api/summary', summaryRoutes)
 app.use('/api/matricula', matriculaRoutes)
+=======
+// -------Impotando modulos y librearias
+import express from "express"
+import dotenv from "dotenv"
+import cors from 'cors'
+dotenv.config();
+const app = express()
+
+// -------Importando rutas
+
+
+// ------- Settings de nuestro backend
+app.set('case sensitive Routing', true)
+app.set('appName', 'Express app')
+app.set('port', process.env.PORT) // -----TRAER EL PUERTO CON UNA VARIBALE DE ENTORNO
+
+
+// ------- MIDDLEWARES ------
+app.use(cors( {
+    origin: "http://localhost:5173"
+} ))
+app.use(express.json())
+app.use(express.urlencoded( {extended: false} ))
+
+
+// ------- RUTAS CREADAS -----
+
+
+>>>>>>> 6e4b530e92deba2f0cfd8271a042996db67c4540
 
 export default app
