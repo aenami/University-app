@@ -55,6 +55,16 @@ export const loginUser = async (req: Request, res: Response) => {
             })
         }
 
+        // Verificamos el estado del usuario
+        const userIsActive = await User.isActive(email)
+        
+        if(userIsActive !== "ACTIVO"){
+            return res.status(409).json({
+                error: true,
+                message: 'Usuario con estado Inactivo'
+            })
+        }
+
         // Verificar la informacion ingresada por el usuario
         const validateData = await User.verifyLoginUser(email, password)
 

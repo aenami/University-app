@@ -12,6 +12,11 @@ interface userDataToken extends RowDataPacket {
     nombres_usuario: string;
 }
 
+interface userState extends RowDataPacket {
+    estado_usuario: string;
+}
+
+
 // Definimos todas las operaciones que se pueden realizar sobre nuestro modelo de usuarios
 interface typeUser {
     createUser: (name: string, lname: string, hashedPassword: string, email: string, birthDate: Date, userGender: "MASCULINO" | "FEMENINO", 
@@ -21,6 +26,7 @@ interface typeUser {
     existsUser: (email: string) => Promise<boolean>;
     verifyLoginUser: (email: string, password: string) => Promise<boolean>;
     getIdUser: (email: string) => Promise<DataUserToken | undefined>;
+    isActive: (email: string) => Promise<string>;
 }
 
 const User:typeUser = {
@@ -112,6 +118,24 @@ const User:typeUser = {
 
         } catch (error) {
             console.log('Error al obtener la informacion del usuario a partir de su email')
+            throw error
+        }
+    },
+    
+    async isActive(email: string) {
+        try {
+            // Consulta db
+            const query = `SELECT estado_usuario FROM USUARIO WHERE email_usuario = ?`
+            const values = [email]
+
+            const db = getConnection()
+
+            const [rows] = await db.query<userState[]>(query, values)
+
+            // Verificamos que devolvio
+            return rows[0].estado_usuario;
+        } catch (error) {
+            console.log('Error al verificar el estado del Usuario')
             throw error
         }
     },
