@@ -84,7 +84,7 @@ export const loginUser = async (req: Request, res: Response) => {
         })
         }
 
-        const token = generateToken(usuarioData.id_usuario)
+        const token = generateToken(usuarioData.id_usuario, usuarioData.rol_usuario)
         
         //-------Devolvemos la respuesta correcta al frontend con el token y la informacion del user logeado
         return res.status(200).json({

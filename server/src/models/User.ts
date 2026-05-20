@@ -10,6 +10,7 @@ interface PasswordUser extends RowDataPacket {
 interface userDataToken extends RowDataPacket {
     id_usuario: number;
     nombres_usuario: string;
+    rol_usuario: string;
 }
 
 interface userState extends RowDataPacket {
@@ -103,7 +104,7 @@ const User:typeUser = {
     async getIdUser(email: string) {
         try {
             // Creamos la consulta a la db
-            const query = `SELECT id_usuario, nombres_usuario FROM USUARIO WHERE email_usuario = ?`
+            const query = `SELECT id_usuario, nombres_usuario, rol_usuario FROM USUARIO WHERE email_usuario = ?`
             const values = [ email ]
 
             // Creando conexion

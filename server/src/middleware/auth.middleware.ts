@@ -18,6 +18,7 @@ export const authenticateUser = (req: Request, res: Response, next: NextFunction
         // 2. Verificamos el token y guardamos el id del usuario en la request para reutilizarlo despues.
         const payload = verifyToken(token);
         req.idUser = payload.id;
+        req.rolUser = payload.rol; // Adjuntamos el rol al token
 
         // 3. Si todo salio bien, dejamos pasar la peticion a la ruta protegida.
         next();

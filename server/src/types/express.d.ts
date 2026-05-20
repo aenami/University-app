@@ -5,6 +5,7 @@ declare global {
         interface Request {
             // idUser queda disponible despues de pasar por el middleware de autenticacion.
             idUser?: number;
+            rolUser?: string;
         }
     }
 }
