@@ -28,6 +28,6 @@ app.use(express.urlencoded( {extended: false} ))
 app.use('/api/auth', authRoutes)
 app.use('/api/groups', groupRoutes)
 
-
+app.use('/api/grupos', grupoRoutes)
 
 export default app
