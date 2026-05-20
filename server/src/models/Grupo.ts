@@ -27,13 +27,11 @@ const Grupo: typeGrupo = {
             const query: string = `
                 SELECT 
                     g.id_grupo,
-                    g.numero_grupo,
-                    g.horario,
-                    g.aula,
+                    g.num_grupo,
                     g.cupo_maximo,
                     a.id_asignatura,
-                    a.nombre_asignatura,
-                    a.creditos_asignatura AS creditos
+                    a.nombre,
+                    a.creditos
                 FROM grupo g
                 INNER JOIN asignatura a ON g.id_asignatura = a.id_asignatura
             `;

@@ -6,7 +6,7 @@ dotenv.config();
 const app = express()
 
 // -------Importando rutas
-
+import grupoRoutes from './routes/grupo.routes'
 
 // ------- Settings de nuestro backend
 app.set('case sensitive Routing', true)
@@ -24,6 +24,6 @@ app.use(express.urlencoded( {extended: false} ))
 
 // ------- RUTAS CREADAS -----
 
-
+app.use('/api/grupos', grupoRoutes)
 
 export default app

@@ -4,7 +4,7 @@ import { consultarOfertaDisponible  } from '../controllers/grupo.controller';
 const router = express.Router()
 
 // Ruta de consulta-grupo
-router.get('consultarGrupo',consultarOfertaDisponible)
+router.get('/consultarGrupo',consultarOfertaDisponible)
 
 
 
