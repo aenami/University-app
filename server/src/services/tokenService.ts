@@ -2,14 +2,16 @@ import jwt from "jsonwebtoken"
 
 export type AuthTokenPayload = {
     id: number;
+    rol: string;
     iat?: number;
     exp?: number;
 }
 
-export const generateToken = (idUser: number) => {
+export const generateToken = (idUser: number, rolUser: string) => {
     // Payload base que viaja dentro del JWT para identificar al usuario autenticado.
     const payload: AuthTokenPayload = {
         id: idUser,
+        rol: rolUser,
     };
 
     const token = jwt.sign(

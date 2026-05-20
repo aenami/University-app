@@ -24,18 +24,18 @@ CREATE TABLE evento (
 -- 2. USUARIO  (tabla base de personas)
 -- ============================================================
 CREATE TABLE usuario (
-  id_usuario       INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  nombres          VARCHAR(50)  NOT NULL,
-  apellidos        VARCHAR(50)  NOT NULL,
-  password_hash    VARCHAR(100) NOT NULL,
-  correo           VARCHAR(60)  NOT NULL UNIQUE,
-  telefono         VARCHAR(15)           UNIQUE,
-  fecha_creacion   DATE         NOT NULL,
-  estado           ENUM('ACTIVO','INACTIVO') NOT NULL DEFAULT 'ACTIVO',
-  fecha_nacimiento DATE         NOT NULL,
-  genero           ENUM('MASCULINO','FEMENINO') NOT NULL,
-  rol_enum         ENUM('ESTUDIANTE','ADMINISTRADOR','COORDINADOR','DOCENTE') NOT NULL,
-  documento        VARCHAR(20)  NOT NULL UNIQUE
+  id_usuario INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  nombres_usuario VARCHAR(50)  NOT NULL,
+  apellidos_usuario VARCHAR(50)  NOT NULL,
+  password_hash VARCHAR(100) NOT NULL,
+  correo_usuario  VARCHAR(60)  NOT NULL UNIQUE,
+  telefono_usuario VARCHAR(15)           UNIQUE,
+  fecha_creacion_usuario DATE NOT NULL,
+  estado_usuario ENUM('ACTIVO','INACTIVO') NOT NULL DEFAULT 'ACTIVO',
+  fecha_nacimiento_usuario DATE NOT NULL,
+  genero_usuario ENUM('MASCULINO','FEMENINO') NOT NULL,
+  rol_usuario ENUM('ESTUDIANTE','ADMINISTRADOR','COORDINADOR','DOCENTE') NOT NULL,
+  documento_usuario VARCHAR(20) NOT NULL UNIQUE
 );
 
 -- ============================================================

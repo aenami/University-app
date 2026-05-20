@@ -1,4 +1,4 @@
-import express from 'express'
+import express from 'express' 
 // Importamos metodos de nuestro controlador
 import { createUser, loginUser } from '../controllers/auth.controller';
 const router = express.Router()
