@@ -4,10 +4,10 @@ import { RowDataPacket } from 'mysql2'
 export interface StudentRow extends RowDataPacket {
     id_estudiante: number;
     id_usuario: number;
-    nombres_usuario: string;
-    apellidos_usuario: string;
-    email_usuario: string;
-    documento_usuario: string;
+    nombres: string;
+    apellidos: string;
+    correo: string;
+    documento: string;
     fecha_matricula: Date;
 }
 
@@ -25,10 +25,10 @@ const Student = {
                 SELECT 
                     e.id_estudiante,
                     u.id_usuario,
-                    u.nombres_usuario,
-                    u.apellidos_usuario,
-                    u.email_usuario,
-                    u.documento_usuario,
+                    u.nombres,
+                    u.apellidos,
+                    u.correo,
+                    u.documento,
                     m.fecha_matricula
                 FROM matricula m
                 INNER JOIN estudiante e ON m.id_estudiante = e.id_estudiante
