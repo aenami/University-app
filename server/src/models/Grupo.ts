@@ -39,6 +39,9 @@ const Grupo: typeGrupo = {
                 (g.cupo_maximo - COUNT(dm.id_detalle))
                 AS cupos_disponibles
 
+                    a.id_asignatura,
+                    a.nombre,
+                    a.creditos
                 FROM grupo g
 
                 INNER JOIN asignatura a
