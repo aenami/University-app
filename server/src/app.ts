@@ -6,6 +6,7 @@ dotenv.config();
 const app = express()
 
 // -------Importando rutas
+import ofertaAcademicaRoutes from './routes/ofertaAcademica.routes.js'
 
 
 // ------- Settings de nuestro backend
@@ -23,6 +24,7 @@ app.use(express.urlencoded( {extended: false} ))
 
 
 // ------- RUTAS CREADAS -----
+app.use('/api/oferta-academica', ofertaAcademicaRoutes)
 
 
 
