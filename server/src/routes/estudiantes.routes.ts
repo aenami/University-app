@@ -1,5 +1,5 @@
 import express from 'express'
-import { getStudentsByGroup } from '../controllers/group.controller.js'
+import { getStudentsByGroup } from '../controllers/estudiantes.controller.js'
 
 const router = express.Router()
 
