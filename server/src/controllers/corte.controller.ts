@@ -1,46 +1,11 @@
 import type { Request, Response } from 'express'
 import Corte from '../models/Corte.js'
 
-// Mock data for testing without database
-const mockCortes = [
-    {
-        id_corte: 1,
-        nombre_corte: 'Primer corte',
-        porcentaje: 30,
-        fecha_inicio: new Date('2026-01-10'),
-        fecha_fin: new Date('2026-03-15')
-    },
-    {
-        id_corte: 2,
-        nombre_corte: 'Segundo corte',
-        porcentaje: 30,
-        fecha_inicio: new Date('2026-03-16'),
-        fecha_fin: new Date('2026-05-31')
-    },
-    {
-        id_corte: 3,
-        nombre_corte: 'Tercer corte',
-        porcentaje: 40,
-        fecha_inicio: new Date('2026-06-01'),
-        fecha_fin: new Date('2026-08-31')
-    }
-];
-
-const USE_MOCK = process.env.USE_MOCK === 'true';
-
 /**
  * Obtiene todos los cortes académicos.
  */
 export const getAllCortes = async (req: Request, res: Response) => {
     try {
-        if (USE_MOCK) {
-            return res.status(200).json({
-                error: false,
-                message: 'Cortes académicos obtenidos con éxito (MOCK).',
-                data: mockCortes
-            });
-        }
-
         const cortes = await Corte.getAll();
 
         return res.status(200).json({
