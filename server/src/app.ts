@@ -30,6 +30,6 @@ app.use('/api/auth', authRoutes)
 app.use('/api/groups', groupRoutes)
 app.use('/api/cortes', corteRoutes)
 
-app.use('/api/grupos', grupoRoutes)
+app.use('/api/grupos', studentsRoutes)
 
 export default app

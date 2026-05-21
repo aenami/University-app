@@ -7,7 +7,6 @@ export const consultarOfertaDisponible = async (req: Request, res: Response) => 
     
         const ofertaAcademica = await Grupo.obtenerOfertaAcademica();
 
-
      
         return res.status(200).json({
             error: false,
