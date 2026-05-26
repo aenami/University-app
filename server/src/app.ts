@@ -7,8 +7,9 @@ const app = express()
 
 // -------Importando rutas
 import authRoutes from './routes/auth.routes.js'
-import groupRoutes from './routes/group.routes.js'
+import groupRoutes from './routes/grupo.routes.js'
 import corteRoutes from './routes/corte.routes.js'
+import studentsRoutes from './routes/estudiantes.routes.js'
 
 
 // ------- Settings de nuestro backend
