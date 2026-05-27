@@ -10,10 +10,14 @@ import ofertaAcademicaRoutes from './routes/ofertaAcademica.routes.js'
 import authRoutes from './routes/auth.routes.js'
 import groupRoutes from './routes/grupo.routes.js'
 import corteRoutes from './routes/corte.routes.js'
+//<<<<<<< HEAD
 import studentsRoutes from './routes/estudiantes.routes.js'
 import usersRoutes from './routes/users.routes.js'
 import notaRoutes from './routes/nota.routes.js'
 
+//=======
+import attendanceRoutes from './routes/attendance.routes.js'
+>>>>>>> 61481b7 (feat: backend asistencia sprint 2)
 
 // ------- Settings de nuestro backend
 app.set('case sensitive Routing', true)
@@ -36,7 +40,12 @@ app.use('/api/groups', groupRoutes)
 app.use('/api/cortes', corteRoutes)
 
 app.use('/api/grupos', studentsRoutes)
+//<<<<<<< HEAD
 app.use('/api/users', usersRoutes)
 app.use('/api/notas', notaRoutes)
 
 export default app
+//=======
+app.use('/api/attendance', attendanceRoutes)
+export default app
+//>>>>>>> 61481b7 (feat: backend asistencia sprint 2)
