@@ -28,7 +28,7 @@ CREATE TABLE usuario (
   nombres_usuario VARCHAR(50)  NOT NULL,
   apellidos_usuario VARCHAR(50)  NOT NULL,
   password_hash VARCHAR(100) NOT NULL,
-  correo_usuario  VARCHAR(60)  NOT NULL UNIQUE,
+  email_usuario  VARCHAR(60)  NOT NULL UNIQUE,
   telefono_usuario VARCHAR(15)           UNIQUE,
   fecha_creacion_usuario DATE NOT NULL,
   estado_usuario ENUM('ACTIVO','INACTIVO') NOT NULL DEFAULT 'ACTIVO',
