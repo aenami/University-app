@@ -264,9 +264,11 @@ CREATE TABLE nota (
   id_asignatura   INT UNSIGNED   NOT NULL,
   id_corte        INT UNSIGNED   NOT NULL,
   id_docente      INT UNSIGNED   NOT NULL,
+  id_estudiante   INT UNSIGNED   NOT NULL,
   CONSTRAINT fk_nota_asignatura FOREIGN KEY (id_asignatura) REFERENCES asignatura(id_asignatura),
   CONSTRAINT fk_nota_corte      FOREIGN KEY (id_corte)      REFERENCES corte(id_corte),
-  CONSTRAINT fk_nota_docente    FOREIGN KEY (id_docente)    REFERENCES docente(id_docente)
+  CONSTRAINT fk_nota_docente    FOREIGN KEY (id_docente)    REFERENCES docente(id_docente),
+  CONSTRAINT fk_nota_estudiante FOREIGN KEY (id_estudiante) REFERENCES estudiante(id_estudiante)
 );
 
 -- ============================================================
