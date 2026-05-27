@@ -51,5 +51,5 @@ app.use('/api/notas', notaRoutes)
 export default app
 //=======
 app.use('/api/attendance', attendanceRoutes)
-export default app
+//export default app
 //>>>>>>> 61481b7 (feat: backend asistencia sprint 2)
