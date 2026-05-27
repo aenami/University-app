@@ -7,12 +7,12 @@ import { PoolConnection, RowDataPacket, ResultSetHeader } from "mysql2/promise";
 // Registrar nota por estudiante (solo docente)
 // ============================================================
 export const registrarNota = async (req: Request, res: Response): Promise<void> => {
-    const { id_estudiante, id_asignatura, id_corte, valor } = req.body;
+    const { id_grupo, id_estudiante, id_corte, valor } = req.body;
 
-    if (!id_estudiante || !id_asignatura || !id_corte || valor === undefined) {
+    if (!id_grupo || !id_estudiante || !id_corte || valor === undefined) {
         res.status(400).json({
             error: true,
-            message: "Faltan campos obligatorios: id_estudiante, id_asignatura, id_corte, valor",
+            message: "Faltan campos obligatorios: id_grupo, id_estudiante, id_corte, valor",
         });
         return;
     }
@@ -46,31 +46,25 @@ export const registrarNota = async (req: Request, res: Response): Promise<void> 
 
         const id_docente = docenteRows[0].id_docente;
 
-        // 2. Verificar que el estudiante existe
-        const [estudianteRows] = await connection.query<RowDataPacket[]>(
-            `SELECT id_estudiante FROM estudiante WHERE id_estudiante = ?`,
-            [id_estudiante]
+        // 2. Verificar que el estudiante está matriculado en el grupo usando joins
+        const [matriculaRows] = await connection.query<RowDataPacket[]>(
+            `SELECT m.id_estudiante, g.id_asignatura
+             FROM matricula m
+             INNER JOIN detalle_matricula dm ON dm.id_matricula = m.id_matricula
+             INNER JOIN grupo g ON g.id_grupo = dm.id_grupo
+             WHERE m.id_estudiante = ? AND dm.id_grupo = ?`,
+            [id_estudiante, id_grupo]
         );
 
-        if (!estudianteRows.length) {
+        if (!matriculaRows.length) {
             await connection.rollback();
-            res.status(404).json({ error: true, message: "Estudiante no encontrado" });
+            res.status(404).json({ error: true, message: "El estudiante no está matriculado en este grupo" });
             return;
         }
 
-        // 3. Verificar que la asignatura existe
-        const [asignaturaRows] = await connection.query<RowDataPacket[]>(
-            `SELECT id_asignatura FROM asignatura WHERE id_asignatura = ?`,
-            [id_asignatura]
-        );
+        const id_asignatura = matriculaRows[0].id_asignatura;
 
-        if (!asignaturaRows.length) {
-            await connection.rollback();
-            res.status(404).json({ error: true, message: "Asignatura no encontrada" });
-            return;
-        }
-
-        // 4. Verificar que el corte existe
+        // 3. Verificar que el corte existe
         const [corteRows] = await connection.query<RowDataPacket[]>(
             `SELECT id_corte FROM corte WHERE id_corte = ?`,
             [id_corte]
@@ -82,9 +76,14 @@ export const registrarNota = async (req: Request, res: Response): Promise<void> 
             return;
         }
 
-        // 5. Verificar que no exista ya una nota para ese estudiante/asignatura/corte
+        // 4. Verificar que no exista ya una nota para ese estudiante/asignatura/corte usando joins
         const [notaExistente] = await connection.query<RowDataPacket[]>(
-            `SELECT id_nota FROM nota WHERE id_estudiante = ? AND id_asignatura = ? AND id_corte = ?`,
+            `SELECT n.id_nota
+             FROM nota n
+             INNER JOIN grupo g ON g.id_asignatura = n.id_asignatura
+             INNER JOIN detalle_matricula dm ON dm.id_grupo = g.id_grupo
+             INNER JOIN matricula m ON m.id_matricula = dm.id_matricula
+             WHERE m.id_estudiante = ? AND n.id_asignatura = ? AND n.id_corte = ?`,
             [id_estudiante, id_asignatura, id_corte]
         );
 
@@ -97,11 +96,11 @@ export const registrarNota = async (req: Request, res: Response): Promise<void> 
             return;
         }
 
-        // 6. Insertar nota
+        // 5. Insertar nota sin id_estudiante
         const [result] = await connection.query<ResultSetHeader>(
-            `INSERT INTO nota (valor, fecha_registro, version_numero, id_asignatura, id_corte, id_docente, id_estudiante)
-             VALUES (?, CURDATE(), 1, ?, ?, ?, ?)`,
-            [valor, id_asignatura, id_corte, id_docente, id_estudiante]
+            `INSERT INTO nota (valor, fecha_registro, version_numero, id_asignatura, id_corte, id_docente)
+             VALUES (?, CURDATE(), 1, ?, ?, ?)`,
+            [valor, id_asignatura, id_corte, id_docente]
         );
 
         await connection.commit();
@@ -112,6 +111,7 @@ export const registrarNota = async (req: Request, res: Response): Promise<void> 
             data: {
                 id_nota: result.insertId,
                 id_estudiante,
+                id_grupo,
                 id_asignatura,
                 id_corte,
                 id_docente,
@@ -147,7 +147,6 @@ export const obtenerNotasPorGrupo = async (req: Request, res: Response): Promise
     const pool = getConnection();
 
     try {
-        // Verificar que el grupo existe
         const [grupoRows] = await pool.query<RowDataPacket[]>(
             `SELECT id_grupo FROM grupo WHERE id_grupo = ?`,
             [id_grupo]
@@ -158,7 +157,6 @@ export const obtenerNotasPorGrupo = async (req: Request, res: Response): Promise
             return;
         }
 
-        // Obtener notas de todos los estudiantes del grupo
         const [notas] = await pool.query<RowDataPacket[]>(
             `SELECT
                 n.id_nota,
@@ -175,14 +173,13 @@ export const obtenerNotasPorGrupo = async (req: Request, res: Response): Promise
                 c.nombre_corte,
                 c.porcentaje
              FROM nota n
-             INNER JOIN estudiante e    ON e.id_estudiante = n.id_estudiante
-             INNER JOIN usuario u       ON u.id_usuario    = e.id_usuario
-             INNER JOIN asignatura a    ON a.id_asignatura = n.id_asignatura
-             INNER JOIN corte c         ON c.id_corte      = n.id_corte
-             INNER JOIN grupo g         ON g.id_asignatura = n.id_asignatura
-             INNER JOIN detalle_matricula dm ON dm.id_grupo = g.id_grupo
-             INNER JOIN matricula m     ON m.id_matricula  = dm.id_matricula
-                                       AND m.id_estudiante = e.id_estudiante
+             INNER JOIN asignatura a       ON a.id_asignatura = n.id_asignatura
+             INNER JOIN grupo g            ON g.id_asignatura = n.id_asignatura
+             INNER JOIN detalle_matricula dm ON dm.id_grupo   = g.id_grupo
+             INNER JOIN matricula m        ON m.id_matricula  = dm.id_matricula
+             INNER JOIN estudiante e       ON e.id_estudiante = m.id_estudiante
+             INNER JOIN usuario u          ON u.id_usuario    = e.id_usuario
+             INNER JOIN corte c            ON c.id_corte      = n.id_corte
              WHERE g.id_grupo = ?
              ORDER BY u.apellidos_usuario, u.nombres_usuario, c.porcentaje`,
             [id_grupo]
@@ -228,7 +225,6 @@ export const editarNota = async (req: Request, res: Response): Promise<void> => 
         connection = await pool.getConnection();
         await connection.beginTransaction();
 
-        // 1. Obtener id_docente a partir del id_usuario del token
         const [docenteRows] = await connection.query<RowDataPacket[]>(
             `SELECT id_docente FROM docente WHERE id_usuario = ?`,
             [req.idUser]
@@ -240,9 +236,8 @@ export const editarNota = async (req: Request, res: Response): Promise<void> => 
             return;
         }
 
-        // 2. Obtener la nota actual
         const [notaRows] = await connection.query<RowDataPacket[]>(
-            `SELECT id_nota, valor, version_numero, id_docente FROM nota WHERE id_nota = ?`,
+            `SELECT id_nota, valor, version_numero FROM nota WHERE id_nota = ?`,
             [id_nota]
         );
 
@@ -261,17 +256,11 @@ export const editarNota = async (req: Request, res: Response): Promise<void> => 
             return;
         }
 
-        // 3. Actualizar la nota
         await connection.query(
             `UPDATE nota SET valor = ?, fecha_registro = CURDATE(), version_numero = version_numero + 1 WHERE id_nota = ?`,
             [valor, id_nota]
         );
 
-        // 4. Registrar en auditoria_nota
-        // Nota: auditoria_nota requiere id_administrador, pero la edición la hace el docente.
-        // Por ahora usamos el id del docente que editó. Si el equipo decide que solo admins
-        // pueden editar, este endpoint debe restringirse con roleAuth.
-        // TODO: coordinar con el equipo si edición es exclusiva de administradores.
         const [adminRows] = await connection.query<RowDataPacket[]>(
             `SELECT id_administrador FROM administrador WHERE id_usuario = ?`,
             [req.idUser]
