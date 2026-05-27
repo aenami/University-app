@@ -17,7 +17,11 @@ import notaRoutes from './routes/nota.routes.js'
 
 //=======
 import attendanceRoutes from './routes/attendance.routes.js'
->>>>>>> 61481b7 (feat: backend asistencia sprint 2)
+//<<<<<<< HEAD
+//>>>>>>> 61481b7 (feat: backend asistencia sprint 2)
+//=======
+import studentsRoutes from './routes/estudiantes.routes.js'
+//>>>>>>> 8c74ef0 (fix: correccion de rutas backend)
 
 // ------- Settings de nuestro backend
 app.set('case sensitive Routing', true)
