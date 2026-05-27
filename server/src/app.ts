@@ -11,7 +11,6 @@ import authRoutes from './routes/auth.routes.js'
 import groupRoutes from './routes/grupo.routes.js'
 import corteRoutes from './routes/corte.routes.js'
 import studentsRoutes from './routes/estudiantes.routes.js'
-import notaRoutes from './routes/nota.routes.js' 
 import usersRoutes from './routes/users.routes.js'
 
 
@@ -36,7 +35,6 @@ app.use('/api/groups', groupRoutes)
 app.use('/api/cortes', corteRoutes)
 
 app.use('/api/grupos', studentsRoutes)
-app.use('/api/notas', notaRoutes)
 app.use('/api/users', usersRoutes)
 
 export default app
