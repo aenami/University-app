@@ -8,9 +8,9 @@ const app = express()
 // -------Importando rutas
 import ofertaAcademicaRoutes from './routes/ofertaAcademica.routes.js'
 import authRoutes from './routes/auth.routes.js'
-import groupRoutes from './routes/group.routes.js'
+import groupRoutes from './routes/grupo.routes.js'
 import corteRoutes from './routes/corte.routes.js'
-
+import matriculaRoutes from './routes/matricula.routes.js' 
 
 // ------- Settings de nuestro backend
 app.set('case sensitive Routing', true)
@@ -31,7 +31,8 @@ app.use('/api/oferta-academica', ofertaAcademicaRoutes)
 app.use('/api/auth', authRoutes)
 app.use('/api/groups', groupRoutes)
 app.use('/api/cortes', corteRoutes)
+app.use('/api/matriculas', matriculaRoutes)
 
-app.use('/api/grupos', studentsRoutes)
+//app.use('/api/grupos', studentsRoutes)
 
 export default app
