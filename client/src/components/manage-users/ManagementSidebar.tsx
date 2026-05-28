@@ -8,24 +8,30 @@ import {
   UserRoundSearch,
   UsersRound,
 } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
 import { tokenManager } from '../../utils/tokenManager'
 
 type SidebarItem = {
   label: string
   icon: typeof ShieldCheck
   active?: boolean
+  to?: string
 }
 
 const sidebarItems: SidebarItem[] = [
-  { label: 'Seguridad', icon: ShieldCheck, active: true },
+  { label: 'Seguridad', icon: ShieldCheck, active: true, to: '/ManageUsers' },
   { label: 'Oferta academica', icon: BookOpen },
-  { label: 'Matriculas', icon: GraduationCap },
+  { label: 'Matriculas', icon: GraduationCap, to: '/SeleccionAsignaturas' },
   { label: 'Seguimiento', icon: UserRoundSearch },
   { label: 'Soporte', icon: Headset },
   { label: 'Analitica', icon: BarChart3 },
 ]
 
-export function ManagementSidebar() {
+type ManagementSidebarProps = {
+  activeItem?: string
+}
+
+export function ManagementSidebar({ activeItem }: ManagementSidebarProps) {
   const handleLogout = () => {
     // Limpiamos la sesion y devolvemos al punto de entrada actual.
     tokenManager.clearSession()
@@ -53,20 +59,35 @@ export function ManagementSidebar() {
       <nav className="mt-10 space-y-2">
         {sidebarItems.map((item) => {
           const Icon = item.icon
+          const isActive = activeItem ? item.label === activeItem : item.active
+          const itemClassName = [
+            'flex w-full items-center gap-3 rounded-xl px-5 py-4 text-left transition-all',
+            isActive
+              ? 'border-l-4 border-[var(--brand-navy)] bg-[#dcebff] pl-4 text-[var(--brand-navy)]'
+              : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900',
+          ].join(' ')
+          const itemContent = (
+            <>
+              <Icon className="h-5 w-5 shrink-0" />
+              <span className="flex-1 text-sm font-semibold">{item.label}</span>
+            </>
+          )
+
+          if (item.to) {
+            return (
+              <Link key={item.label} to={item.to} className={itemClassName}>
+                {itemContent}
+              </Link>
+            )
+          }
 
           return (
             <button
               key={item.label}
               type="button"
-              className={[
-                'flex w-full items-center gap-3 rounded-xl px-5 py-4 text-left transition-all',
-                item.active
-                  ? 'border-l-4 border-[var(--brand-navy)] bg-[#dcebff] pl-4 text-[var(--brand-navy)]'
-                  : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900',
-              ].join(' ')}
+              className={itemClassName}
             >
-              <Icon className="h-5 w-5 shrink-0" />
-              <span className="flex-1 text-sm font-semibold">{item.label}</span>
+              {itemContent}
             </button>
           )
         })}

@@ -18,10 +18,17 @@ function Home() {
         </p>
 
         <Link
-          to="/ManageUsers/"
+          to="/ManageUsers"
           className="mt-8 inline-flex rounded-2xl bg-[var(--brand-navy)] px-6 py-3 text-sm font-semibold text-white shadow-[0_18px_35px_rgba(15,46,90,0.28)] transition hover:-translate-y-0.5"
         >
           Ir a gestion de usuarios
+        </Link>
+
+        <Link
+          to="/SeleccionAsignaturas"
+          className="ml-3 mt-8 inline-flex rounded-2xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-800 transition hover:-translate-y-0.5 hover:border-slate-400"
+        >
+          Seleccionar asignaturas
         </Link>
       </div>
     </div>

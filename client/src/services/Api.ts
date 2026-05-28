@@ -38,21 +38,21 @@ export const api = {
             headers: buildHeaders(isPublic),
         }).then(handleResponse),
 
-    post: (endpoint: string, body: Record<string, unknown>, isPublic = false) =>
+    post: (endpoint: string, body: object, isPublic = false) =>
         fetch(`${BASE_URL}${endpoint}`, {
             method: "POST",
             headers: buildHeaders(isPublic),
             body: JSON.stringify(body),
         }).then(handleResponse),
 
-    put: (endpoint: string, body: Record<string, unknown>) =>
+    put: (endpoint: string, body: object) =>
         fetch(`${BASE_URL}${endpoint}`, {
             method: "PUT",
             headers: buildHeaders(),
             body: JSON.stringify(body),
         }).then(handleResponse),
 
-    patch: (endpoint: string, body: Record<string, unknown>) =>
+    patch: (endpoint: string, body: object) =>
         fetch(`${BASE_URL}${endpoint}`, {
             method: "PATCH",
             headers: buildHeaders(),

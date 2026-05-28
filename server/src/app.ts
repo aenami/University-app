@@ -23,7 +23,7 @@ app.set('port', process.env.PORT) // -----TRAER EL PUERTO CON UNA VARIBALE DE EN
 
 // ------- MIDDLEWARES ------
 app.use(cors( {
-    origin: "http://localhost:5173"
+    origin: ["http://localhost:5173", "http://127.0.0.1:5173"]
 } ))
 app.use(express.json())
 app.use(express.urlencoded( {extended: false} ))
