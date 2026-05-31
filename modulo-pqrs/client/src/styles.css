@@ -1,0 +1,45 @@
+
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap");
+@import "tailwindcss";
+
+:root {
+  --app-bg: #ffffff;
+  --brand-navy: #072d63;
+  --brand-sky: #cfe1fb;
+  --brand-cyan: #5f738f;
+  --brand-gold: #7a4d18;
+  --font-body: "Manrope", "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  min-height: 100%;
+}
+
+html {
+  background: #ffffff;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background: #ffffff;
+  color: #0f172a;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  background: rgba(76, 145, 255, 0.24);
+}
+
