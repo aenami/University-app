@@ -23,7 +23,7 @@ export const createUser = async (req: Request, res: Response) => {
         //1. Hasheamos la contraseña
         const hashedPassword = await hashPassword(password);
 
-        await User.createUser(name, lastName, password, email, birthDate, userGender, "ESTUDIANTE",userID)
+        await User.createUser(name, lastName, hashedPassword, email, birthDate, userGender, "ESTUDIANTE", userID)
 
         res.status(201).json({
             error: false,

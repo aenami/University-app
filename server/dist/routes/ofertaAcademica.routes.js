@@ -1,0 +1,20 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const ofertaAcademica_controller_js_1 = require("../controllers/ofertaAcademica.controller.js");
+const router = express_1.default.Router();
+router.post("/programas", ofertaAcademica_controller_js_1.crearPrograma);
+router.get("/programas", ofertaAcademica_controller_js_1.consultarProgramas);
+router.post("/asignaturas", ofertaAcademica_controller_js_1.crearAsignatura);
+router.get("/asignaturas", ofertaAcademica_controller_js_1.consultarAsignaturas);
+router.post("/pensums", ofertaAcademica_controller_js_1.crearPensum);
+router.post("/pensums/:idPensum/asignaturas", ofertaAcademica_controller_js_1.asociarAsignaturaPensum);
+router.post("/grupos", ofertaAcademica_controller_js_1.crearGrupo);
+router.get("/grupos", ofertaAcademica_controller_js_1.consultarGrupos);
+router.post("/grupos/:idGrupo/horarios", ofertaAcademica_controller_js_1.crearHorarioAula);
+router.get("/grupos/:idGrupo/horarios", ofertaAcademica_controller_js_1.consultarHorariosAulas);
+router.get("/horarios", ofertaAcademica_controller_js_1.consultarHorariosAulas);
+exports.default = router;
