@@ -13,10 +13,9 @@ import corteRoutes from './routes/corte.routes.js'
 import studentsRoutes from './routes/estudiantes.routes.js'
 import usersRoutes from './routes/users.routes.js'
 import notaRoutes from './routes/nota.routes.js'
-<<<<<<< HEAD
 import pqrRoutes from './routes/pqr.routes.js'
-=======
->>>>>>> 0b29f9a6fb05a2fe0077c848d1504a459163bc73
+import matriculaRoutes from './routes/matricula.routes.js'
+import auditRoutes from './routes/audit.routes.js'
 
 
 // ------- Settings de nuestro backend
@@ -42,9 +41,8 @@ app.use('/api/cortes', corteRoutes)
 app.use('/api/grupos', studentsRoutes)
 app.use('/api/users', usersRoutes)
 app.use('/api/notas', notaRoutes)
-<<<<<<< HEAD
 app.use('/api/pqr', pqrRoutes)
-=======
->>>>>>> 0b29f9a6fb05a2fe0077c848d1504a459163bc73
+app.use('/api/matriculas', matriculaRoutes)
+app.use('/api/logs', auditRoutes)
 
 export default app

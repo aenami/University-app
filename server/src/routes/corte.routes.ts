@@ -6,22 +6,26 @@ import {
     updateCorte,
     deleteCorte
 } from '../controllers/corte.controller.js'
+import { authenticateUser } from '../middleware/auth.middleware.js'
+import { authenticateRole } from '../middleware/roleAuth.middleware.js'
 
 const router = express.Router()
 
-// Obtener todos los cortes
+/**
+ * Rutas de Cortes Evaluativos
+ * 
+ * Los GET para ver cortes pueden ser consultados libremente por alumnos o docentes.
+ * Los métodos que alteran el corte evaluativo quedan estrictamente protegidos para ADMINISTRADOR.
+ */
 router.get('/', getAllCortes)
-
-// Obtener un corte específico por ID
 router.get('/:id_corte', getCorteById)
 
-// Crear un nuevo corte
+// Proteger operaciones de escritura
+router.use(authenticateUser);
+router.use(authenticateRole("ADMINISTRADOR"));
+
 router.post('/', createCorte)
-
-// Actualizar un corte
 router.put('/:id_corte', updateCorte)
-
-// Eliminar un corte
 router.delete('/:id_corte', deleteCorte)
 
 export default router

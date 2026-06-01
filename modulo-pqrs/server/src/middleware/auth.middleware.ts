@@ -4,11 +4,7 @@ import { verifyToken } from "../services/tokenService.js";
 export const authenticateUser = (req: Request, res: Response, next: NextFunction) => {
     // Permitimos un bypass controlado solo para desarrollo local mientras el login no esta listo.
     if (process.env.ALLOW_DEV_AUTH_BYPASS === "true") {
-<<<<<<< HEAD
         req.idUser = 4;
-=======
-        req.idUser = 1;
->>>>>>> 0b29f9a6fb05a2fe0077c848d1504a459163bc73
         req.rolUser = "ADMINISTRADOR";
         return next();
     }

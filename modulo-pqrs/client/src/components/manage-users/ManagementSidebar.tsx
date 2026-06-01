@@ -22,12 +22,8 @@ const sidebarItems: SidebarItem[] = [
   { label: 'Seguridad', icon: ShieldCheck, active: true, to: '/ManageUsers' },
   { label: 'Oferta academica', icon: BookOpen },
   { label: 'Matriculas', icon: GraduationCap, to: '/SeleccionAsignaturas' },
-  { label: 'Seguimiento', icon: UserRoundSearch },
-<<<<<<< HEAD
+  { label: 'Seguimiento', icon: UserRoundSearch, to: '/Seguimiento' },
   { label: 'Soporte', icon: Headset, to: '/Soporte' },
-=======
-  { label: 'Soporte', icon: Headset },
->>>>>>> 0b29f9a6fb05a2fe0077c848d1504a459163bc73
   { label: 'Analitica', icon: BarChart3 },
 ]
 

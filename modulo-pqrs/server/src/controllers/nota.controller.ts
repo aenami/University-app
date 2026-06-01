@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import Nota from "../models/Nota.js";
+import AuditLog from "../models/AuditLog.js";
 
 // ============================================================
 // POST /api/notas
@@ -54,6 +55,14 @@ export const registrarNota = async (req: Request, res: Response) => {
 
         // 5. Crear nota
         const id_nota = await Nota.crearNota(valor, id_asignatura, id_corte, id_docente);
+
+        // 5.5 Registrar log de auditoría para la creación de nota
+        if (req.idUser) {
+            await AuditLog.createLog(
+                `Registro de nota ID: ${id_nota} con valor ${valor} para el estudiante #${id_estudiante} (Asignatura: ${id_asignatura}, Corte: ${id_corte})`,
+                req.idUser
+            );
+        }
 
         return res.status(201).json({
             error: false,
@@ -146,6 +155,14 @@ export const editarNota = async (req: Request, res: Response) => {
         const id_administrador = await Nota.getAdminByUsuario(req.idUser!);
         if (id_administrador) {
             await Nota.crearAuditoriaNote(valorAnterior, valor, id_administrador, idNota);
+        }
+
+        // 4.5 Registrar log de auditoría general para la edición de nota
+        if (req.idUser) {
+            await AuditLog.createLog(
+                `Modificacion de nota ID: ${idNota} - Valor anterior: ${valorAnterior} a Nuevo valor: ${valor}`,
+                req.idUser
+            );
         }
 
         return res.status(200).json({

@@ -22,7 +22,7 @@ const sidebarItems: SidebarItem[] = [
   { label: 'Seguridad', icon: ShieldCheck, active: true, to: '/ManageUsers' },
   { label: 'Oferta academica', icon: BookOpen },
   { label: 'Matriculas', icon: GraduationCap, to: '/SeleccionAsignaturas' },
-  { label: 'Seguimiento', icon: UserRoundSearch },
+  { label: 'Seguimiento', icon: UserRoundSearch, to: '/Seguimiento' },
   { label: 'Soporte', icon: Headset },
   { label: 'Analitica', icon: BarChart3 },
 ]
