@@ -78,6 +78,8 @@ export function CreateUserModal({
     return null
   }
 
+  // Esta parte se encarga de manejar el evento del envio de la info
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
