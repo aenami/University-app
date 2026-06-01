@@ -4,7 +4,6 @@ import type { FormEvent, ReactNode } from 'react'
 import type {
   CreateManagedUserPayload,
   ManagedUserRole,
-  UserGender,
 } from '../../types/userManagement'
 import { roleLabels, userGenders } from '../../types/userManagement'
 
@@ -51,7 +50,7 @@ export function CreateUserModal({
     return null
   }
 
-  const updateField = <Field extends keyof FormDraft>(field: Field, value: FormDraft[Field]) => {
+  const updateField = <TField extends keyof FormDraft>(field: TField, value: FormDraft[TField]) => {
     setDraft((currentDraft) => ({
       ...currentDraft,
       [field]: value,
@@ -212,7 +211,7 @@ export function CreateUserModal({
                   <button
                     key={gender}
                     type="button"
-                    onClick={() => updateField('userGender', gender as UserGender)}
+                    onClick={() => updateField('userGender', gender)}
                     className={[
                       'rounded-2xl border px-4 py-3 text-sm font-semibold transition',
                       draft.userGender === gender
