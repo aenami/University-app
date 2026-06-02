@@ -1,7 +1,83 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+<<<<<<< Updated upstream
 exports.obtenerMatricula = exports.crearMatricula = void 0;
 const db_1 = require("../config/db");
+=======
+exports.obtenerMatricula = exports.crearMatricula = exports.obtenerEstadoMatriculaActual = void 0;
+const db_js_1 = require("../config/db.js");
+const AuditLog_js_1 = __importDefault(require("../models/AuditLog.js"));
+const obtenerEstadoMatriculaActual = async (req, res) => {
+    if (!req.idUser) {
+        res.status(401).json({ ok: false, mensaje: "No se pudo identificar al usuario autenticado" });
+        return;
+    }
+    const pool = (0, db_js_1.getConnection)();
+    try {
+        const [estudianteRows] = await pool.query(`SELECT id_estudiante FROM estudiante WHERE id_usuario = ? LIMIT 1`, [req.idUser]);
+        if (!estudianteRows.length) {
+            res.status(404).json({ ok: false, mensaje: "No se encontro un estudiante asociado al usuario" });
+            return;
+        }
+        const idEstudiante = estudianteRows[0].id_estudiante;
+        const [matriculas] = await pool.query(`SELECT
+                m.id_matricula,
+                m.id_estudiante,
+                m.fecha_matricula,
+                m.total_creditos,
+                m.precio_total,
+                m.id_programa,
+                p.nombre AS programa
+             FROM matricula m
+             INNER JOIN programa p ON p.id_programa = m.id_programa
+             WHERE m.id_estudiante = ?
+             ORDER BY m.fecha_matricula DESC, m.id_matricula DESC
+             LIMIT 1`, [idEstudiante]);
+        if (!matriculas.length) {
+            res.status(200).json({
+                ok: true,
+                data: {
+                    estado: "SIN_MATRICULA",
+                    id_estudiante: idEstudiante,
+                    detalles: []
+                }
+            });
+            return;
+        }
+        const matricula = matriculas[0];
+        const [detalles] = await pool.query(`SELECT
+                dm.id_detalle,
+                dm.id_grupo,
+                g.num_grupo,
+                a.id_asignatura,
+                a.nombre AS asignatura,
+                a.creditos
+             FROM detalle_matricula dm
+             INNER JOIN grupo g ON g.id_grupo = dm.id_grupo
+             INNER JOIN asignatura a ON a.id_asignatura = g.id_asignatura
+             WHERE dm.id_matricula = ?
+             ORDER BY a.nombre, g.num_grupo`, [matricula.id_matricula]);
+        res.status(200).json({
+            ok: true,
+            data: {
+                estado: "MATRICULADO",
+                ...matricula,
+                detalles
+            }
+        });
+    }
+    catch (error) {
+        if (error instanceof Error) {
+            console.error("Error al obtener estado de matricula:", error.message);
+            res.status(500).json({ ok: false, mensaje: "Error interno al obtener el estado de matricula" });
+        }
+        else {
+            res.status(500).json({ ok: false, mensaje: "Error inesperado al obtener el estado de matricula" });
+        }
+    }
+};
+exports.obtenerEstadoMatriculaActual = obtenerEstadoMatriculaActual;
+>>>>>>> Stashed changes
 // ============================================================
 // POST /matriculas
 // Guardar matrícula + detalle_matricula desde selección del estudiante
