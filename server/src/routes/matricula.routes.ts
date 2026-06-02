@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { crearMatricula, obtenerMatricula } from "../controllers/matricula.controller.js";
+import {
+    crearMatricula,
+    obtenerEstadoMatriculaActual,
+    obtenerMatricula,
+} from "../controllers/matricula.controller.js";
 import { authenticateUser } from "../middleware/auth.middleware.js";
 
 const router = Router();
@@ -8,6 +12,7 @@ const router = Router();
 router.use(authenticateUser);
 
 router.post("/", crearMatricula);
+router.get("/mi-estado", obtenerEstadoMatriculaActual);
 router.get("/:id", obtenerMatricula);
 
 export default router;

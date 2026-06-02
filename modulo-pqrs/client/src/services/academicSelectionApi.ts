@@ -1,5 +1,5 @@
 import { api } from './Api'
-import type { Subject, SubjectGroup } from '../types/academicSelection'
+import type { EnrollmentStatus, Subject, SubjectGroup } from '../types/academicSelection'
 
 type SubjectsResponse = {
   error: boolean
@@ -13,6 +13,12 @@ type GroupsResponse = {
   data: SubjectGroup[]
 }
 
+type EnrollmentStatusResponse = {
+  ok: boolean
+  mensaje?: string
+  data: EnrollmentStatus
+}
+
 export const academicSelectionApi = {
   async getSubjects() {
     const response = (await api.get('/api/oferta-academica/asignaturas')) as SubjectsResponse
@@ -21,6 +27,11 @@ export const academicSelectionApi = {
 
   async getGroups() {
     const response = (await api.get('/api/oferta-academica/grupos')) as GroupsResponse
+    return response.data
+  },
+
+  async getEnrollmentStatus() {
+    const response = (await api.get('/api/matriculas/mi-estado')) as EnrollmentStatusResponse
     return response.data
   },
 }

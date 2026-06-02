@@ -1,8 +1,10 @@
 import { startTransition, useEffect, useMemo, useState } from 'react'
 import {
   BookMarked,
+  CalendarCheck,
   Check,
   Clock3,
+  ClipboardCheck,
   GraduationCap,
   Layers3,
   Search,
@@ -12,7 +14,7 @@ import { ManagementSidebar } from '../components/manage-users/ManagementSidebar'
 import { ManagementTopbar } from '../components/manage-users/ManagementTopbar'
 import { academicSelectionApi } from '../services/academicSelectionApi'
 import { tokenManager } from '../utils/tokenManager'
-import type { Subject, SubjectGroup } from '../types/academicSelection'
+import type { EnrollmentStatus, Subject, SubjectGroup } from '../types/academicSelection'
 
 const getErrorMessage = (error: unknown) => {
   if (error instanceof Error) {
@@ -22,10 +24,38 @@ const getErrorMessage = (error: unknown) => {
   return 'Ocurrio un error inesperado. Intenta nuevamente.'
 }
 
+const formatEnrollmentDate = (date?: string) => {
+  if (!date) {
+    return 'Sin fecha'
+  }
+
+  const [year, month, day] = date.split('T')[0].split('-').map(Number)
+  const localDate = year && month && day ? new Date(year, month - 1, day) : new Date(date)
+
+  return new Intl.DateTimeFormat('es-CO', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  }).format(localDate)
+}
+
+const formatCurrency = (value?: number) => {
+  if (value === undefined) {
+    return 'Pendiente'
+  }
+
+  return new Intl.NumberFormat('es-CO', {
+    currency: 'COP',
+    maximumFractionDigits: 0,
+    style: 'currency',
+  }).format(value)
+}
+
 export function SubjectGroupSelectionPage() {
   const sessionUser = tokenManager.getUser()
   const [subjects, setSubjects] = useState<Subject[]>([])
   const [groups, setGroups] = useState<SubjectGroup[]>([])
+  const [enrollmentStatus, setEnrollmentStatus] = useState<EnrollmentStatus | null>(null)
   const [selectedSubjectId, setSelectedSubjectId] = useState<number | null>(null)
   const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null)
   const [searchValue, setSearchValue] = useState('')
@@ -39,14 +69,16 @@ export function SubjectGroupSelectionPage() {
       setErrorMessage(null)
 
       try {
-        const [subjectsResponse, groupsResponse] = await Promise.all([
+        const [subjectsResponse, groupsResponse, enrollmentStatusResponse] = await Promise.all([
           academicSelectionApi.getSubjects(),
           academicSelectionApi.getGroups(),
+          academicSelectionApi.getEnrollmentStatus(),
         ])
 
         startTransition(() => {
           setSubjects(subjectsResponse)
           setGroups(groupsResponse)
+          setEnrollmentStatus(enrollmentStatusResponse)
           setSelectedSubjectId(subjectsResponse[0]?.id_asignatura ?? null)
         })
       } catch (error) {
@@ -73,6 +105,8 @@ export function SubjectGroupSelectionPage() {
   const availableGroups = groups.filter((group) => group.id_asignatura === selectedSubjectId)
   const selectedGroup = groups.find((group) => group.id_grupo === selectedGroupId)
   const totalCredits = selectedSubject?.creditos ?? 0
+  const isEnrolled = enrollmentStatus?.estado === 'MATRICULADO'
+  const enrollmentStatusLabel = isEnrolled ? 'Matriculado' : 'Sin matricula'
 
   const handleSubjectSelect = (subjectId: number) => {
     setSelectedSubjectId(subjectId)
@@ -105,7 +139,18 @@ export function SubjectGroupSelectionPage() {
                 </p>
               </div>
 
-              <div className="grid w-full grid-cols-2 gap-3 sm:w-auto sm:grid-cols-3">
+              <div className="grid w-full grid-cols-2 gap-3 sm:w-auto sm:grid-cols-4">
+                <div className="rounded-md border border-slate-200 bg-white px-4 py-3">
+                  <p className="text-xs font-semibold text-slate-500">Estado</p>
+                  <p
+                    className={[
+                      'mt-1 text-lg font-extrabold',
+                      isEnrolled ? 'text-emerald-700' : 'text-amber-700',
+                    ].join(' ')}
+                  >
+                    {enrollmentStatus ? enrollmentStatusLabel : 'Cargando'}
+                  </p>
+                </div>
                 <div className="rounded-md border border-slate-200 bg-white px-4 py-3">
                   <p className="text-xs font-semibold text-slate-500">Asignaturas</p>
                   <p className="mt-1 text-2xl font-extrabold text-slate-900">{subjects.length}</p>
@@ -126,6 +171,86 @@ export function SubjectGroupSelectionPage() {
                 {errorMessage}
               </div>
             ) : null}
+
+            <section className="mt-6 overflow-hidden rounded-[12px] border border-slate-200 bg-white shadow-[0_10px_30px_rgba(15,23,42,0.05)]">
+              <div className="flex flex-col gap-4 border-b border-slate-200 px-5 py-4 md:flex-row md:items-center md:justify-between">
+                <div className="flex items-center gap-3">
+                  <div
+                    className={[
+                      'flex h-10 w-10 items-center justify-center rounded-md',
+                      isEnrolled
+                        ? 'bg-emerald-50 text-emerald-700'
+                        : 'bg-amber-50 text-amber-700',
+                    ].join(' ')}
+                  >
+                    <ClipboardCheck className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-extrabold text-slate-900">
+                      Estado de matricula
+                    </h2>
+                    <p className="text-sm text-slate-500">
+                      {isEnrolled
+                        ? `Matricula #${enrollmentStatus?.id_matricula} registrada`
+                        : 'Aun no tienes una matricula registrada'}
+                    </p>
+                  </div>
+                </div>
+                <span
+                  className={[
+                    'inline-flex h-8 items-center justify-center rounded-full px-3 text-xs font-extrabold uppercase',
+                    isEnrolled
+                      ? 'bg-emerald-50 text-emerald-700'
+                      : 'bg-amber-50 text-amber-700',
+                  ].join(' ')}
+                >
+                  {enrollmentStatus ? enrollmentStatusLabel : 'Cargando'}
+                </span>
+              </div>
+
+              <div className="grid gap-4 p-5 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.35fr)]">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <SummaryItem label="Programa" value={enrollmentStatus?.programa ?? 'Pendiente'} />
+                  <SummaryItem
+                    label="Fecha"
+                    value={formatEnrollmentDate(enrollmentStatus?.fecha_matricula)}
+                  />
+                  <SummaryItem
+                    label="Creditos matriculados"
+                    value={String(enrollmentStatus?.total_creditos ?? 0)}
+                  />
+                  <SummaryItem label="Valor" value={formatCurrency(enrollmentStatus?.precio_total)} />
+                </div>
+
+                <div className="rounded-md border border-slate-200 bg-slate-50 p-4">
+                  <div className="flex items-center gap-2 text-sm font-extrabold text-slate-900">
+                    <CalendarCheck className="h-4 w-4 text-slate-500" />
+                    Asignaturas matriculadas
+                  </div>
+                  {enrollmentStatus?.detalles.length ? (
+                    <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                      {enrollmentStatus.detalles.map((detail) => (
+                        <div
+                          key={detail.id_detalle}
+                          className="rounded-md border border-slate-200 bg-white px-3 py-3"
+                        >
+                          <p className="truncate text-sm font-extrabold text-slate-900">
+                            {detail.asignatura}
+                          </p>
+                          <p className="mt-1 text-xs font-semibold text-slate-500">
+                            Grupo {detail.num_grupo} - {detail.creditos} creditos
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="mt-3 text-sm text-slate-500">
+                      Cuando confirmes una matricula, las asignaturas inscritas apareceran aqui.
+                    </p>
+                  )}
+                </div>
+              </div>
+            </section>
 
             <section className="mt-7 grid gap-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.35fr)]">
               <div className="overflow-hidden rounded-[12px] border border-slate-200 bg-white shadow-[0_10px_30px_rgba(15,23,42,0.05)]">
