@@ -12,7 +12,8 @@ import {
 } from 'lucide-react'
 import { ManagementSidebar } from '../components/manage-users/ManagementSidebar'
 import { ManagementTopbar } from '../components/manage-users/ManagementTopbar'
-import { auditApi, type AuditLogItem } from '../services/auditApi'
+import { auditApi } from '../services/auditApi'
+import type { AuditLogItem } from '../services/auditApi'
 import { tokenManager } from '../utils/tokenManager'
 
 /**
@@ -115,7 +116,7 @@ export function SeguimientoPage() {
       return dateStr
     }
     
-    // Formato amigable en Español Colombiano
+    // Formato en Español
     return new Intl.DateTimeFormat('es-CO', {
       day: '2-digit',
       month: 'short',
@@ -180,8 +181,8 @@ export function SeguimientoPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--app-bg)] text-slate-900">
-      <div className="mx-auto grid min-h-screen max-w-[1280px] grid-cols-1 xl:grid-cols-[270px_minmax(0,1fr)]">
+    <div className="min-h-screen bg-(--app-bg) text-slate-900">
+      <div className="mx-auto grid min-h-screen max-w-7xl grid-cols-1 xl:grid-cols-[270px_minmax(0,1fr)]">
         {/* Barra Lateral Navegación */}
         <ManagementSidebar activeItem="Seguimiento" />
 
@@ -253,7 +254,7 @@ export function SeguimientoPage() {
             </section>
 
             {/* Filtros e Historial */}
-            <section className="mt-8 rounded-[24px] border border-slate-200/80 bg-white p-6 shadow-[0_12px_45px_rgba(15,23,42,0.04)]">
+            <section className="mt-8 rounded-3xl border border-slate-200/80 bg-white p-6 shadow-[0_12px_45px_rgba(15,23,42,0.04)]">
               
               {/* Barra de Herramientas de Filtros */}
               <div className="flex flex-col gap-4 border-b border-slate-100 pb-5 sm:flex-row sm:items-center sm:justify-between">
@@ -269,7 +270,7 @@ export function SeguimientoPage() {
                     <select
                       value={selectedRole}
                       onChange={(e) => setSelectedRole(e.target.value)}
-                      className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 outline-none transition focus:border-[var(--brand-navy)] focus:bg-white"
+                      className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 outline-none transition focus:border-(--brand-navy) focus:bg-white"
                     >
                       <option value="TODOS">Todos los roles</option>
                       <option value="ADMINISTRADOR">Administradores</option>
@@ -285,7 +286,7 @@ export function SeguimientoPage() {
                     <select
                       value={selectedActionType}
                       onChange={(e) => setSelectedActionType(e.target.value)}
-                      className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 outline-none transition focus:border-[var(--brand-navy)] focus:bg-white"
+                      className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold text-slate-700 outline-none transition focus:border-(--brand-navy) focus:bg-white"
                     >
                       <option value="TODOS">Todos los módulos</option>
                       <option value="USUARIOS">Gestión de Usuarios</option>
@@ -299,7 +300,7 @@ export function SeguimientoPage() {
 
               {/* Contenedor de la Tabla */}
               <div className="mt-4 overflow-x-auto">
-                <table className="w-full min-w-[700px] border-collapse text-left">
+                <table className="w-full min-w-175 border-collapse text-left">
                   <thead>
                     <tr className="border-b border-slate-100 text-xs font-semibold uppercase tracking-wider text-slate-400">
                       <th className="pb-3 pt-2">ID Log</th>
