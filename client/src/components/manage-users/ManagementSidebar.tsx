@@ -16,14 +16,15 @@ type SidebarItem = {
   icon: typeof ShieldCheck
   active?: boolean
   to?: string
+  allowedRoles?: string[]
 }
 
 const sidebarItems: SidebarItem[] = [
-  { label: 'Seguridad', icon: ShieldCheck, active: true, to: '/ManageUsers' },
-  { label: 'Estudiantes', icon: UsersRound, to: '/ManageStudents' },
-  { label: 'Oferta academica', icon: BookOpen },
+  { label: 'Seguridad', icon: ShieldCheck, active: true, to: '/ManageUsers', allowedRoles: ['ADMINISTRADOR', 'COORDINADOR'] },
+  { label: 'Estudiantes', icon: UsersRound, to: '/ManageStudents', allowedRoles: ['ADMINISTRADOR'] },
+  { label: 'Oferta academica', icon: BookOpen, allowedRoles: ['ADMINISTRADOR', 'COORDINADOR', 'DOCENTE'] },
   { label: 'Matriculas', icon: GraduationCap, to: '/SeleccionAsignaturas' },
-  { label: 'Seguimiento', icon: UserRoundSearch, to: '/Seguimiento' },
+  { label: 'Seguimiento', icon: UserRoundSearch, to: '/Seguimiento', allowedRoles: ['ADMINISTRADOR'] },
   { label: 'Soporte', icon: Headset },
   { label: 'Analitica', icon: BarChart3 },
 ]
@@ -61,7 +62,9 @@ export function ManagementSidebar({ activeItem }: ManagementSidebarProps) {
       </div>
 
       <nav className="mt-10 space-y-2">
-        {sidebarItems.map((item) => {
+        {sidebarItems
+          .filter((item) => !item.allowedRoles || (role && item.allowedRoles.includes(role)))
+          .map((item) => {
           const Icon = item.icon
           const isActive = activeItem ? item.label === activeItem : item.active
           const itemClassName = [
