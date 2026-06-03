@@ -1,7 +1,7 @@
-// Importamos el modelo
+import type { Request, Response } from 'express'
 import User from "../models/User.js"
-import type { Request, Response} from 'express' // Importamos los tipos de datos para req/res
-import { hashPassword } from "../services/passwordService.js" // Importamos el servicio de password
+import { getConnection } from "../config/db.js"
+import { hashPassword } from "../services/passwordService.js"
 import { generateToken } from "../services/tokenService.js"
 
 export const createUser = async (req: Request, res: Response) => {
@@ -19,11 +19,47 @@ export const createUser = async (req: Request, res: Response) => {
             })
         }
 
-        //------------- Logica para la insercion del usuario
+        const documentExists = await User.existsDocument(userID)
+        if(documentExists){
+            return res.status(409).json({
+                error: true,
+                message: 'El documento ya esta siendo utilizado por otro usuario'
+            })
+        }
+
+        //------------- Logica para la insercion del usuario de forma transaccional
         //1. Hasheamos la contraseña
         const hashedPassword = await hashPassword(password);
 
-        await User.createUser(name, lastName, hashedPassword, email, birthDate, userGender, "ESTUDIANTE", userID)
+        const pool = getConnection();
+        const connection = await pool.getConnection();
+
+        try {
+            await connection.beginTransaction();
+
+            // 1. Crear usuario en tabla usuario
+            const createdUserId = await User.createUser(
+                name, 
+                lastName, 
+                hashedPassword, 
+                email, 
+                birthDate, 
+                userGender, 
+                "ESTUDIANTE", 
+                userID,
+                connection
+            );
+
+            // 2. Crear relación en tabla estudiante
+            await User.createStudentRelation(createdUserId, connection);
+
+            await connection.commit();
+        } catch (error) {
+            await connection.rollback();
+            throw error;
+        } finally {
+            connection.release();
+        }
 
         res.status(201).json({
             error: false,
@@ -35,7 +71,7 @@ export const createUser = async (req: Request, res: Response) => {
         console.log('Error al crear el usuario: ', error)
         res.status(500).json({
             error: true,
-            message: error
+            message: error instanceof Error ? error.message : 'Error al registrar el estudiante'
         })
     }
 }

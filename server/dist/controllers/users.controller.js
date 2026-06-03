@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateManagedUserStatus = exports.createManagedUser = exports.getManagedUsers = void 0;
+exports.updateStudentStatus = exports.createStudent = exports.getStudents = exports.updateManagedUserStatus = exports.createManagedUser = exports.getManagedUsers = void 0;
 const User_js_1 = __importDefault(require("../models/User.js"));
 const AuditLog_js_1 = __importDefault(require("../models/AuditLog.js"));
 const db_js_1 = require("../config/db.js");
@@ -267,3 +267,191 @@ const updateManagedUserStatus = async (req, res) => {
     }
 };
 exports.updateManagedUserStatus = updateManagedUserStatus;
+const getStudents = async (req, res) => {
+    try {
+        const rawSearch = req.query.search;
+        const search = typeof rawSearch === "string" ? rawSearch : undefined;
+        const students = await User_js_1.default.getStudents(search);
+        return res.status(200).json({
+            error: false,
+            message: "Estudiantes consultados con exito",
+            data: students,
+        });
+    }
+    catch (error) {
+        console.log("Error al consultar estudiantes", error);
+        return res.status(500).json({
+            error: true,
+            message: "No fue posible consultar los estudiantes",
+        });
+    }
+};
+exports.getStudents = getStudents;
+const createStudent = async (req, res) => {
+    const { name, lastName, email, password, birthDate, userGender, userID, } = req.body;
+    // Validamos lo minimo para no insertar usuarios incompletos.
+    if (!hasText(name) ||
+        !hasText(lastName) ||
+        !hasText(email) ||
+        !hasText(password) ||
+        !hasText(birthDate) ||
+        !hasText(userID) ||
+        !isValidGender(userGender)) {
+        return res.status(400).json({
+            error: true,
+            message: "La informacion enviada no es valida para crear el estudiante",
+        });
+    }
+    const normalizedName = name.trim();
+    const normalizedLastName = lastName.trim();
+    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedPassword = password.trim();
+    const normalizedBirthDate = birthDate;
+    const normalizedUserId = userID.trim();
+    const normalizedGender = userGender;
+    const validationError = validateManagedUserInput({
+        name: normalizedName,
+        lastName: normalizedLastName,
+        email: normalizedEmail,
+        password: normalizedPassword,
+        birthDate: normalizedBirthDate,
+        userGender: normalizedGender,
+        userRole: "ADMINISTRADOR", // Usamos un rol genérico para pasar la validación local de longitud de campos
+        userID: normalizedUserId,
+    });
+    if (validationError) {
+        return res.status(validationError.status).json(validationError);
+    }
+    const parsedBirthDate = new Date(normalizedBirthDate);
+    if (Number.isNaN(parsedBirthDate.getTime())) {
+        return res.status(400).json({
+            error: true,
+            message: "La fecha de nacimiento no tiene un formato valido",
+        });
+    }
+    try {
+        if (!req.idUser) {
+            return res.status(401).json({
+                error: true,
+                message: "No fue posible identificar al administrador que ejecuta la accion",
+            });
+        }
+        const emailExists = await User_js_1.default.existsUser(normalizedEmail);
+        if (emailExists) {
+            return res.status(409).json({
+                error: true,
+                message: "El correo ingresado ya pertenece a otro usuario",
+            });
+        }
+        const documentExists = await User_js_1.default.existsDocument(normalizedUserId);
+        if (documentExists) {
+            return res.status(409).json({
+                error: true,
+                message: "El documento ingresado ya pertenece a otro usuario",
+            });
+        }
+        const hashedPassword = await (0, passwordService_js_1.hashPassword)(normalizedPassword);
+        const pool = (0, db_js_1.getConnection)();
+        const connection = await pool.getConnection();
+        let createdUserId = 0;
+        try {
+            await connection.beginTransaction();
+            // 1. Crear el usuario en la tabla 'usuario' con rol 'ESTUDIANTE'
+            createdUserId = await User_js_1.default.createUser(normalizedName, normalizedLastName, hashedPassword, normalizedEmail, normalizedBirthDate, normalizedGender, "ESTUDIANTE", normalizedUserId, connection);
+            // 2. Crear la fila en la tabla 'estudiante' con el id_usuario correspondiente
+            await User_js_1.default.createStudentRelation(createdUserId, connection);
+            // 3. Crear log de auditoria
+            await AuditLog_js_1.default.createLog(`Creacion de estudiante con ID Usuario: ${createdUserId} y Documento: ${normalizedUserId}`, req.idUser, connection);
+            await connection.commit();
+        }
+        catch (error) {
+            await connection.rollback();
+            throw error;
+        }
+        finally {
+            connection.release();
+        }
+        const createdStudent = await User_js_1.default.getStudentById(createdUserId);
+        return res.status(201).json({
+            error: false,
+            message: "Estudiante creado con exito",
+            data: createdStudent,
+        });
+    }
+    catch (error) {
+        console.log("Error al crear el estudiante", error);
+        return res.status(500).json({
+            error: true,
+            message: getMysqlFriendlyMessage(error, "No fue posible crear el estudiante"),
+        });
+    }
+};
+exports.createStudent = createStudent;
+const updateStudentStatus = async (req, res) => {
+    const userId = Number(req.params.userId);
+    const { status } = req.body;
+    if (!Number.isInteger(userId) || userId <= 0 || !isManagedStatus(status)) {
+        return res.status(400).json({
+            error: true,
+            message: "Los datos enviados para actualizar el estado no son validos",
+        });
+    }
+    try {
+        if (!req.idUser) {
+            return res.status(401).json({
+                error: true,
+                message: "No fue posible identificar al administrador que ejecuta la accion",
+            });
+        }
+        const currentUser = await User_js_1.default.getStudentById(userId);
+        if (!currentUser) {
+            return res.status(404).json({
+                error: true,
+                message: "No se encontro el estudiante solicitado",
+            });
+        }
+        if (currentUser.status === status) {
+            return res.status(409).json({
+                error: true,
+                message: `El estudiante ya se encuentra en estado ${status.toLowerCase()}`,
+            });
+        }
+        const pool = (0, db_js_1.getConnection)();
+        const connection = await pool.getConnection();
+        let wasUpdated = false;
+        try {
+            await connection.beginTransaction();
+            wasUpdated = await User_js_1.default.updateStudentStatus(userId, status, connection);
+            if (!wasUpdated) {
+                await connection.rollback();
+                return res.status(404).json({
+                    error: true,
+                    message: "No se encontro el estudiante solicitado",
+                });
+            }
+            await AuditLog_js_1.default.createLog(`Cambio de estado del estudiante (Usuario ID: ${userId}): ${currentUser.status} a ${status}`, req.idUser, connection);
+            await connection.commit();
+        }
+        catch (error) {
+            await connection.rollback();
+            throw error;
+        }
+        finally {
+            connection.release();
+        }
+        const updatedStudent = await User_js_1.default.getStudentById(userId);
+        return res.status(200).json({
+            error: false,
+            message: "Estado del estudiante actualizado con exito",
+            data: updatedStudent,
+        });
+    }
+    catch (error) {
+        console.log("Error al actualizar el estado del estudiante", error);
+        return res.status(500).json({
+            error: true,
+            message: getMysqlFriendlyMessage(error, "No fue posible actualizar el estado del estudiante"),
+        });
+    }
+};
+exports.updateStudentStatus = updateStudentStatus;

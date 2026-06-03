@@ -14,6 +14,7 @@ import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as SeleccionAsignaturasIndexRouteImport } from './routes/SeleccionAsignaturas/index'
 import { Route as SeguimientoIndexRouteImport } from './routes/Seguimiento/index'
 import { Route as ManageUsersIndexRouteImport } from './routes/ManageUsers/index'
+import { Route as ManageStudentsIndexRouteImport } from './routes/ManageStudents/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -41,9 +42,15 @@ const ManageUsersIndexRoute = ManageUsersIndexRouteImport.update({
   path: '/ManageUsers/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ManageStudentsIndexRoute = ManageStudentsIndexRouteImport.update({
+  id: '/ManageStudents/',
+  path: '/ManageStudents/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ManageStudents/': typeof ManageStudentsIndexRoute
   '/ManageUsers/': typeof ManageUsersIndexRoute
   '/Seguimiento/': typeof SeguimientoIndexRoute
   '/SeleccionAsignaturas/': typeof SeleccionAsignaturasIndexRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ManageStudents': typeof ManageStudentsIndexRoute
   '/ManageUsers': typeof ManageUsersIndexRoute
   '/Seguimiento': typeof SeguimientoIndexRoute
   '/SeleccionAsignaturas': typeof SeleccionAsignaturasIndexRoute
@@ -59,6 +67,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/ManageStudents/': typeof ManageStudentsIndexRoute
   '/ManageUsers/': typeof ManageUsersIndexRoute
   '/Seguimiento/': typeof SeguimientoIndexRoute
   '/SeleccionAsignaturas/': typeof SeleccionAsignaturasIndexRoute
@@ -68,15 +77,23 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/ManageStudents/'
     | '/ManageUsers/'
     | '/Seguimiento/'
     | '/SeleccionAsignaturas/'
     | '/login/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ManageUsers' | '/Seguimiento' | '/SeleccionAsignaturas' | '/login'
+  to:
+    | '/'
+    | '/ManageStudents'
+    | '/ManageUsers'
+    | '/Seguimiento'
+    | '/SeleccionAsignaturas'
+    | '/login'
   id:
     | '__root__'
     | '/'
+    | '/ManageStudents/'
     | '/ManageUsers/'
     | '/Seguimiento/'
     | '/SeleccionAsignaturas/'
@@ -85,6 +102,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ManageStudentsIndexRoute: typeof ManageStudentsIndexRoute
   ManageUsersIndexRoute: typeof ManageUsersIndexRoute
   SeguimientoIndexRoute: typeof SeguimientoIndexRoute
   SeleccionAsignaturasIndexRoute: typeof SeleccionAsignaturasIndexRoute
@@ -128,11 +146,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ManageUsersIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ManageStudents/': {
+      id: '/ManageStudents/'
+      path: '/ManageStudents'
+      fullPath: '/ManageStudents/'
+      preLoaderRoute: typeof ManageStudentsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ManageStudentsIndexRoute: ManageStudentsIndexRoute,
   ManageUsersIndexRoute: ManageUsersIndexRoute,
   SeguimientoIndexRoute: SeguimientoIndexRoute,
   SeleccionAsignaturasIndexRoute: SeleccionAsignaturasIndexRoute,

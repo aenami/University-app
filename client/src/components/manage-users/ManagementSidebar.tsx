@@ -20,6 +20,7 @@ type SidebarItem = {
 
 const sidebarItems: SidebarItem[] = [
   { label: 'Seguridad', icon: ShieldCheck, active: true, to: '/ManageUsers' },
+  { label: 'Estudiantes', icon: UsersRound, to: '/ManageStudents' },
   { label: 'Oferta academica', icon: BookOpen },
   { label: 'Matriculas', icon: GraduationCap, to: '/SeleccionAsignaturas' },
   { label: 'Seguimiento', icon: UserRoundSearch, to: '/Seguimiento' },

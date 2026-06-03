@@ -14,4 +14,8 @@ router.use((0, roleAuth_middleware_js_1.authenticateRole)("ADMINISTRADOR"));
 router.get("/staff", users_controller_js_1.getManagedUsers);
 router.post("/staff", users_controller_js_1.createManagedUser);
 router.patch("/staff/:userId/status", users_controller_js_1.updateManagedUserStatus);
+// Rutas de administración de estudiantes
+router.get("/students", users_controller_js_1.getStudents);
+router.post("/students", users_controller_js_1.createStudent);
+router.patch("/students/:userId/status", users_controller_js_1.updateStudentStatus);
 exports.default = router;
