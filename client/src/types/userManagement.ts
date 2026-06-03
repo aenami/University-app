@@ -11,7 +11,7 @@ export const managedUserStatuses = ['ACTIVO', 'INACTIVO'] as const
 // Opciones de genero soportadas por el backend.
 export const userGenders = ['MASCULINO', 'FEMENINO'] as const
 
-export type ManagedUserRole = (typeof managedUserRoles)[number]
+export type ManagedUserRole = (typeof managedUserRoles)[number] | 'ESTUDIANTE'
 export type ManagedUserStatus = (typeof managedUserStatuses)[number]
 export type UserGender = (typeof userGenders)[number]
 export type ManagedUserRoleFilter = ManagedUserRole | 'TODOS'

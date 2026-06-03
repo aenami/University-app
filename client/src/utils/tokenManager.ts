@@ -47,7 +47,19 @@ export const tokenManager = {
         } catch {
             return false; // Token malformado
         }
-    }
-    
+    },
 
+    // 6. Funcion que se encargara de retornar el rol del usuario decodificado desde el token JWT
+    getUserRole(): string | null {
+        const token = localStorage.getItem(TOKEN_KEY);
+        if (!token) return null;
+
+        try {
+            const payload = JSON.parse(atob(token.split('.')[1]));
+            return payload.rol || null;
+        } catch {
+            return null; // Token malformado o sin rol
+        }
+    }
 }
+

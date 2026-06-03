@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const nota_controller_js_1 = require("../controllers/nota.controller.js");
+const auth_middleware_js_1 = require("../middleware/auth.middleware.js");
+const roleAuth_middleware_js_1 = require("../middleware/roleAuth.middleware.js");
+const router = (0, express_1.Router)();
+router.use(auth_middleware_js_1.authenticateUser);
+router.post("/", (0, roleAuth_middleware_js_1.authenticateRole)("DOCENTE"), nota_controller_js_1.registrarNota);
+router.get("/grupo/:id_grupo", (0, roleAuth_middleware_js_1.authenticateRole)("DOCENTE", "COORDINADOR", "ADMINISTRADOR"), nota_controller_js_1.obtenerNotasPorGrupo);
+router.put("/:id_nota", (0, roleAuth_middleware_js_1.authenticateRole)("DOCENTE"), nota_controller_js_1.editarNota);
+exports.default = router;

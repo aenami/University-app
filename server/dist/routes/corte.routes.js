@@ -5,15 +5,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const corte_controller_js_1 = require("../controllers/corte.controller.js");
+const auth_middleware_js_1 = require("../middleware/auth.middleware.js");
+const roleAuth_middleware_js_1 = require("../middleware/roleAuth.middleware.js");
 const router = express_1.default.Router();
-// Obtener todos los cortes
+/**
+ * Rutas de Cortes Evaluativos
+ *
+ * Los GET para ver cortes pueden ser consultados libremente por alumnos o docentes.
+ * Los métodos que alteran el corte evaluativo quedan estrictamente protegidos para ADMINISTRADOR.
+ */
 router.get('/', corte_controller_js_1.getAllCortes);
-// Obtener un corte específico por ID
 router.get('/:id_corte', corte_controller_js_1.getCorteById);
-// Crear un nuevo corte
+// Proteger operaciones de escritura
+router.use(auth_middleware_js_1.authenticateUser);
+router.use((0, roleAuth_middleware_js_1.authenticateRole)("ADMINISTRADOR"));
 router.post('/', corte_controller_js_1.createCorte);
-// Actualizar un corte
 router.put('/:id_corte', corte_controller_js_1.updateCorte);
-// Eliminar un corte
 router.delete('/:id_corte', corte_controller_js_1.deleteCorte);
 exports.default = router;

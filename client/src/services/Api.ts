@@ -25,7 +25,13 @@ const handleResponse = async (response: Response) => {
         }
 
         const error = await response.json().catch(() => ({}));
-        throw new Error(error.message || `Error ${response.status}`);
+        const message = typeof error.message === "string"
+            ? error.message
+            : error.message instanceof Error
+              ? error.message.message
+              : `Error ${response.status}`;
+
+        throw new Error(message);
     }
 
     return response.json();

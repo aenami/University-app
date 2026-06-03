@@ -1,204 +1,92 @@
-Welcome to your new TanStack Start app! 
+# University App - Cliente
 
-# Getting Started
+Aplicativo web institucional para la gestion academica de Unicomfacauca.
 
-To run this application:
+## Instalacion y ejecucion
 
 ```bash
 npm install
 npm run dev
 ```
 
-# Building For Production
+El cliente se ejecuta por defecto en:
 
-To build this application for production:
-
-```bash
-npm run build
+```text
+http://localhost:5173
 ```
 
-## Testing
+El backend esperado para los reportes finales es:
 
-This project uses [Vitest](https://vitest.dev/) for testing. You can run the tests with:
-
-```bash
-npm run test
+```text
+http://localhost:3000/api
 ```
 
-## Styling
+## HU-18 - Reportes finales y evidencias
 
-This project uses [Tailwind CSS](https://tailwindcss.com/) for styling.
+La pantalla de reportes finales esta disponible en:
 
-### Removing Tailwind CSS
-
-If you prefer not to use Tailwind CSS:
-
-1. Remove the demo pages in `src/routes/demo/`
-2. Replace the Tailwind import in `src/styles.css` with your own styles
-3. Remove `tailwindcss()` from the plugins array in `vite.config.ts`
-4. Uninstall the packages: `npm install @tailwindcss/vite tailwindcss -D`
-
-## Linting & Formatting
-
-
-This project uses [eslint](https://eslint.org/) and [prettier](https://prettier.io/) for linting and formatting. Eslint is configured using [tanstack/eslint-config](https://tanstack.com/config/latest/docs/eslint). The following scripts are available:
-
-```bash
-npm run lint
-npm run format
-npm run check
+```text
+/Reportes
 ```
 
+La HU-18 consolida reportes por modulo sin corregir el alcance pendiente de otras historias de usuario.
 
+Reportes incluidos:
 
-## Routing
+- Usuarios: reporte general con filtro por rol.
+- Oferta academica: grupos, cupos, asignaturas y programa, con filtro por programa.
+- Matriculas: registros de matricula con filtro por programa.
+- Notas: reporte parcial con filtro por corte.
+- Asistencia: reporte parcial con filtro por estado de asistencia.
+- PQR: solicitudes con filtro por estado.
+- Panel general: indicadores globales del sistema.
 
-This project uses [TanStack Router](https://tanstack.com/router) with file-based routing. Routes are managed as files in `src/routes`.
+## Datos reales, parciales y mocks
 
-### Adding A Route
+Cada respuesta de reportes incluye el campo `origen`.
 
-To add a new route to your application just add a new file in the `./src/routes` directory.
+- `real`: datos consultados directamente desde la base de datos.
+- `real_parcial`: datos reales, pero con alcance limitado por relaciones faltantes de HU previas.
 
-TanStack will automatically generate the content of the route file for you.
+Notas y asistencia se marcan como `real_parcial` porque las tablas actuales no relacionan directamente estudiante o detalle de matricula. HU-18 solo expone y documenta esa limitacion; no modifica el modelo de esas historias.
 
-Now that you have two routes you can use a `Link` component to navigate between them.
+## Roles de acceso
 
-### Adding Links
+Los endpoints de reportes requieren autenticacion y permiten acceso a:
 
-To use SPA (Single Page Application) navigation you will need to import the `Link` component from `@tanstack/react-router`.
+- `ADMINISTRADOR`
+- `COORDINADOR`
+- `DOCENTE`
 
-```tsx
-import { Link } from "@tanstack/react-router";
-```
+El acceso debe hacerse con login real y token JWT. El bypass de administrador por variable de entorno fue retirado para cumplir la revision del Master.
 
-Then anywhere in your JSX you can use it like so:
+## Evidencias finales
 
-```tsx
-<Link to="/about">About</Link>
-```
+Para cerrar HU-18 se deben anexar las siguientes evidencias en Jira o en el repositorio:
 
-This will create a link that will navigate to the `/about` route.
+- Captura o video corto de la pantalla `/Reportes`.
+- Evidencia de filtros por modulo.
+- Evidencia de reportes parciales de notas y asistencia con su aviso visible.
+- Estado de Jira de las HU finalizadas en `Done`.
+- Justificacion de cualquier HU o modulo pendiente.
+- Enlace al repositorio o Pull Request usado para la entrega.
 
-More information on the `Link` component can be found in the [Link documentation](https://tanstack.com/router/v1/docs/framework/react/api/router/linkComponent).
+## Usuarios de prueba
 
-### Using A Layout
+Registrar aqui los usuarios usados en la presentacion final:
 
-In the File Based Routing setup the layout is located in `src/routes/__root.tsx`. Anything you add to the root route will appear in all the routes. The route content will appear in the JSX where you render `{children}` in the `shellComponent`.
+| Rol | Correo | Contrasena | Observacion |
+| --- | --- | --- | --- |
+| ADMINISTRADOR | laura.martinez@universityapp.edu.co | 123456 | Acceso total a reportes finales |
+| COORDINADOR | pedro.lopez@universityapp.edu.co | 123456 | Acceso a reportes finales |
+| DOCENTE | carlos.ruiz@universityapp.edu.co | 123456 | Acceso a reportes finales |
 
-Here is an example layout that includes a header:
+Las contrasenas de la semilla no se guardan en texto plano: `server/src/db/dbinserts.sql` inserta el hash bcrypt correspondiente.
 
-```tsx
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+## Funcionalidades implementadas relacionadas con HU-18
 
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title: 'My App' },
-    ],
-  }),
-  shellComponent: ({ children }) => (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        <header>
-          <nav>
-            <Link to="/">Home</Link>
-            <Link to="/about">About</Link>
-          </nav>
-        </header>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  ),
-})
-```
-
-More information on layouts can be found in the [Layouts documentation](https://tanstack.com/router/latest/docs/framework/react/guide/routing-concepts#layouts).
-
-## Server Functions
-
-TanStack Start provides server functions that allow you to write server-side code that seamlessly integrates with your client components.
-
-```tsx
-import { createServerFn } from '@tanstack/react-start'
-
-const getServerTime = createServerFn({
-  method: 'GET',
-}).handler(async () => {
-  return new Date().toISOString()
-})
-
-// Use in a component
-function MyComponent() {
-  const [time, setTime] = useState('')
-  
-  useEffect(() => {
-    getServerTime().then(setTime)
-  }, [])
-  
-  return <div>Server time: {time}</div>
-}
-```
-
-## API Routes
-
-You can create API routes by using the `server` property in your route definitions:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-import { json } from '@tanstack/react-start'
-
-export const Route = createFileRoute('/api/hello')({
-  server: {
-    handlers: {
-      GET: () => json({ message: 'Hello, World!' }),
-    },
-  },
-})
-```
-
-## Data Fetching
-
-There are multiple ways to fetch data in your application. You can use TanStack Query to fetch data from a server. But you can also use the `loader` functionality built into TanStack Router to load the data for a route before it's rendered.
-
-For example:
-
-```tsx
-import { createFileRoute } from '@tanstack/react-router'
-
-export const Route = createFileRoute('/people')({
-  loader: async () => {
-    const response = await fetch('https://swapi.dev/api/people')
-    return response.json()
-  },
-  component: PeopleComponent,
-})
-
-function PeopleComponent() {
-  const data = Route.useLoaderData()
-  return (
-    <ul>
-      {data.results.map((person) => (
-        <li key={person.name}>{person.name}</li>
-      ))}
-    </ul>
-  )
-}
-```
-
-Loaders simplify your data fetching logic dramatically. Check out more information in the [Loader documentation](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading#loader-parameters).
-
-# Demo files
-
-Files prefixed with `demo` can be safely deleted. They are there to provide a starting point for you to play around with the features you've installed.
-
-# Learn More
-
-You can learn more about all of the offerings from TanStack in the [TanStack documentation](https://tanstack.com).
-
-For TanStack Start specific documentation, visit [TanStack Start](https://tanstack.com/start).
+- Consolidacion de reportes por modulo.
+- Filtros basicos por modulo.
+- Reporte de asistencia agregado como alcance propio de HU-18.
+- Identificacion de datos reales y datos reales parciales.
+- Documentacion de limitaciones que dependen de HU previas.

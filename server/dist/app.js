@@ -16,13 +16,17 @@ const grupo_routes_js_1 = __importDefault(require("./routes/grupo.routes.js"));
 const corte_routes_js_1 = __importDefault(require("./routes/corte.routes.js"));
 const estudiantes_routes_js_1 = __importDefault(require("./routes/estudiantes.routes.js"));
 const users_routes_js_1 = __importDefault(require("./routes/users.routes.js"));
+const nota_routes_js_1 = __importDefault(require("./routes/nota.routes.js"));
+const matricula_routes_js_1 = __importDefault(require("./routes/matricula.routes.js"));
+const audit_routes_js_1 = __importDefault(require("./routes/audit.routes.js"));
+const reportes_routes_js_1 = __importDefault(require("./routes/reportes.routes.js"));
 // ------- Settings de nuestro backend
 app.set('case sensitive Routing', true);
 app.set('appName', 'Express app');
 app.set('port', process.env.PORT); // -----TRAER EL PUERTO CON UNA VARIBALE DE ENTORNO
 // ------- MIDDLEWARES ------
 app.use((0, cors_1.default)({
-    origin: "http://localhost:5173"
+    origin: ["http://localhost:5173", "http://127.0.0.1:5173"]
 }));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: false }));
@@ -31,6 +35,10 @@ app.use('/api/oferta-academica', ofertaAcademica_routes_js_1.default);
 app.use('/api/auth', auth_routes_js_1.default);
 app.use('/api/groups', grupo_routes_js_1.default);
 app.use('/api/cortes', corte_routes_js_1.default);
+app.use('/api/matriculas', matricula_routes_js_1.default);
 app.use('/api/grupos', estudiantes_routes_js_1.default);
 app.use('/api/users', users_routes_js_1.default);
+app.use('/api/notas', nota_routes_js_1.default);
+app.use('/api/logs', audit_routes_js_1.default);
+app.use('/api/reportes', reportes_routes_js_1.default);
 exports.default = app;

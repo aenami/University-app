@@ -16,15 +16,17 @@ type SidebarItem = {
   icon: typeof ShieldCheck
   active?: boolean
   to?: string
+  allowedRoles?: string[]
 }
 
 const sidebarItems: SidebarItem[] = [
-  { label: 'Seguridad', icon: ShieldCheck, active: true, to: '/ManageUsers' },
-  { label: 'Oferta academica', icon: BookOpen },
+  { label: 'Seguridad', icon: ShieldCheck, active: true, to: '/ManageUsers', allowedRoles: ['ADMINISTRADOR', 'COORDINADOR'] },
+  { label: 'Estudiantes', icon: UsersRound, to: '/ManageStudents', allowedRoles: ['ADMINISTRADOR'] },
+  { label: 'Oferta academica', icon: BookOpen, allowedRoles: ['ADMINISTRADOR', 'COORDINADOR', 'DOCENTE'] },
   { label: 'Matriculas', icon: GraduationCap, to: '/SeleccionAsignaturas' },
-  { label: 'Seguimiento', icon: UserRoundSearch },
+  { label: 'Seguimiento', icon: UserRoundSearch, to: '/Seguimiento', allowedRoles: ['ADMINISTRADOR'] },
   { label: 'Soporte', icon: Headset },
-  { label: 'Analitica', icon: BarChart3 },
+  { label: 'Reportes', icon: BarChart3, to: '/Reportes', allowedRoles: ['ADMINISTRADOR', 'COORDINADOR', 'DOCENTE'] },
 ]
 
 type ManagementSidebarProps = {
@@ -35,8 +37,11 @@ export function ManagementSidebar({ activeItem }: ManagementSidebarProps) {
   const handleLogout = () => {
     // Limpiamos la sesion y devolvemos al punto de entrada actual.
     tokenManager.clearSession()
-    window.location.href = '/'
+    window.location.href = '/login'
   }
+
+  const user = tokenManager.getUser()
+  const role = tokenManager.getUserRole()
 
   return (
     <aside className="flex min-h-screen flex-col bg-white px-5 py-14">
@@ -57,7 +62,9 @@ export function ManagementSidebar({ activeItem }: ManagementSidebarProps) {
       </div>
 
       <nav className="mt-10 space-y-2">
-        {sidebarItems.map((item) => {
+        {sidebarItems
+          .filter((item) => !item.allowedRoles || (role && item.allowedRoles.includes(role)))
+          .map((item) => {
           const Icon = item.icon
           const isActive = activeItem ? item.label === activeItem : item.active
           const itemClassName = [
@@ -93,10 +100,17 @@ export function ManagementSidebar({ activeItem }: ManagementSidebarProps) {
         })}
       </nav>
 
+      {user && (
+        <div className="mt-auto border-t border-slate-100 pt-5 px-3">
+          <p className="text-sm font-bold text-slate-800 truncate">{user.nombre}</p>
+          <p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{role || 'Usuario'}</p>
+        </div>
+      )}
+
       <button
         type="button"
         onClick={handleLogout}
-        className="mt-auto flex w-full items-center gap-3 px-5 py-4 text-sm font-semibold text-slate-600 transition hover:text-slate-900"
+        className={`${user ? 'mt-3' : 'mt-auto'} flex w-full items-center gap-3 px-5 py-4 text-sm font-semibold text-slate-600 transition hover:text-slate-900`}
       >
         <LogOut className="h-5 w-5" />
         Cerrar Sesion

@@ -13,6 +13,9 @@ import corteRoutes from './routes/corte.routes.js'
 import studentsRoutes from './routes/estudiantes.routes.js'
 import usersRoutes from './routes/users.routes.js'
 import notaRoutes from './routes/nota.routes.js'
+import matriculaRoutes from './routes/matricula.routes.js'
+import auditRoutes from './routes/audit.routes.js'
+import reportesRoutes from './routes/reportes.routes.js'
 
 
 // ------- Settings de nuestro backend
@@ -34,9 +37,12 @@ app.use('/api/oferta-academica', ofertaAcademicaRoutes)
 app.use('/api/auth', authRoutes)
 app.use('/api/groups', groupRoutes)
 app.use('/api/cortes', corteRoutes)
+app.use('/api/matriculas', matriculaRoutes)
 
 app.use('/api/grupos', studentsRoutes)
 app.use('/api/users', usersRoutes)
 app.use('/api/notas', notaRoutes)
+app.use('/api/logs', auditRoutes)
+app.use('/api/reportes', reportesRoutes)
 
 export default app

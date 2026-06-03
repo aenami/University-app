@@ -10,12 +10,21 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as SeleccionAsignaturasIndexRouteImport } from './routes/SeleccionAsignaturas/index'
+import { Route as SeguimientoIndexRouteImport } from './routes/Seguimiento/index'
+import { Route as ReportesIndexRouteImport } from './routes/Reportes/index'
 import { Route as ManageUsersIndexRouteImport } from './routes/ManageUsers/index'
+import { Route as ManageStudentsIndexRouteImport } from './routes/ManageStudents/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginIndexRoute = LoginIndexRouteImport.update({
+  id: '/login/',
+  path: '/login/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SeleccionAsignaturasIndexRoute =
@@ -24,40 +33,93 @@ const SeleccionAsignaturasIndexRoute =
     path: '/SeleccionAsignaturas/',
     getParentRoute: () => rootRouteImport,
   } as any)
+const SeguimientoIndexRoute = SeguimientoIndexRouteImport.update({
+  id: '/Seguimiento/',
+  path: '/Seguimiento/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportesIndexRoute = ReportesIndexRouteImport.update({
+  id: '/Reportes/',
+  path: '/Reportes/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ManageUsersIndexRoute = ManageUsersIndexRouteImport.update({
   id: '/ManageUsers/',
   path: '/ManageUsers/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ManageStudentsIndexRoute = ManageStudentsIndexRouteImport.update({
+  id: '/ManageStudents/',
+  path: '/ManageStudents/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ManageStudents/': typeof ManageStudentsIndexRoute
   '/ManageUsers/': typeof ManageUsersIndexRoute
+  '/Reportes/': typeof ReportesIndexRoute
+  '/Seguimiento/': typeof SeguimientoIndexRoute
   '/SeleccionAsignaturas/': typeof SeleccionAsignaturasIndexRoute
+  '/login/': typeof LoginIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ManageStudents': typeof ManageStudentsIndexRoute
   '/ManageUsers': typeof ManageUsersIndexRoute
+  '/Reportes': typeof ReportesIndexRoute
+  '/Seguimiento': typeof SeguimientoIndexRoute
   '/SeleccionAsignaturas': typeof SeleccionAsignaturasIndexRoute
+  '/login': typeof LoginIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/ManageStudents/': typeof ManageStudentsIndexRoute
   '/ManageUsers/': typeof ManageUsersIndexRoute
+  '/Reportes/': typeof ReportesIndexRoute
+  '/Seguimiento/': typeof SeguimientoIndexRoute
   '/SeleccionAsignaturas/': typeof SeleccionAsignaturasIndexRoute
+  '/login/': typeof LoginIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/ManageUsers/' | '/SeleccionAsignaturas/'
+  fullPaths:
+    | '/'
+    | '/ManageStudents/'
+    | '/ManageUsers/'
+    | '/Reportes/'
+    | '/Seguimiento/'
+    | '/SeleccionAsignaturas/'
+    | '/login/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ManageUsers' | '/SeleccionAsignaturas'
-  id: '__root__' | '/' | '/ManageUsers/' | '/SeleccionAsignaturas/'
+  to:
+    | '/'
+    | '/ManageStudents'
+    | '/ManageUsers'
+    | '/Reportes'
+    | '/Seguimiento'
+    | '/SeleccionAsignaturas'
+    | '/login'
+  id:
+    | '__root__'
+    | '/'
+    | '/ManageStudents/'
+    | '/ManageUsers/'
+    | '/Reportes/'
+    | '/Seguimiento/'
+    | '/SeleccionAsignaturas/'
+    | '/login/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ManageStudentsIndexRoute: typeof ManageStudentsIndexRoute
   ManageUsersIndexRoute: typeof ManageUsersIndexRoute
+  ReportesIndexRoute: typeof ReportesIndexRoute
+  SeguimientoIndexRoute: typeof SeguimientoIndexRoute
   SeleccionAsignaturasIndexRoute: typeof SeleccionAsignaturasIndexRoute
+  LoginIndexRoute: typeof LoginIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -69,11 +131,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login/': {
+      id: '/login/'
+      path: '/login'
+      fullPath: '/login/'
+      preLoaderRoute: typeof LoginIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/SeleccionAsignaturas/': {
       id: '/SeleccionAsignaturas/'
       path: '/SeleccionAsignaturas'
       fullPath: '/SeleccionAsignaturas/'
       preLoaderRoute: typeof SeleccionAsignaturasIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/Seguimiento/': {
+      id: '/Seguimiento/'
+      path: '/Seguimiento'
+      fullPath: '/Seguimiento/'
+      preLoaderRoute: typeof SeguimientoIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/Reportes/': {
+      id: '/Reportes/'
+      path: '/Reportes'
+      fullPath: '/Reportes/'
+      preLoaderRoute: typeof ReportesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ManageUsers/': {
@@ -83,13 +166,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ManageUsersIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ManageStudents/': {
+      id: '/ManageStudents/'
+      path: '/ManageStudents'
+      fullPath: '/ManageStudents/'
+      preLoaderRoute: typeof ManageStudentsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ManageStudentsIndexRoute: ManageStudentsIndexRoute,
   ManageUsersIndexRoute: ManageUsersIndexRoute,
+  ReportesIndexRoute: ReportesIndexRoute,
+  SeguimientoIndexRoute: SeguimientoIndexRoute,
   SeleccionAsignaturasIndexRoute: SeleccionAsignaturasIndexRoute,
+  LoginIndexRoute: LoginIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
