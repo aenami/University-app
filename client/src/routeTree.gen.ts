@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as SeleccionAsignaturasIndexRouteImport } from './routes/SeleccionAsignaturas/index'
 import { Route as SeguimientoIndexRouteImport } from './routes/Seguimiento/index'
 import { Route as ManageUsersIndexRouteImport } from './routes/ManageUsers/index'
@@ -17,6 +18,11 @@ import { Route as ManageUsersIndexRouteImport } from './routes/ManageUsers/index
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginIndexRoute = LoginIndexRouteImport.update({
+  id: '/login/',
+  path: '/login/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SeleccionAsignaturasIndexRoute =
@@ -41,12 +47,14 @@ export interface FileRoutesByFullPath {
   '/ManageUsers/': typeof ManageUsersIndexRoute
   '/Seguimiento/': typeof SeguimientoIndexRoute
   '/SeleccionAsignaturas/': typeof SeleccionAsignaturasIndexRoute
+  '/login/': typeof LoginIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ManageUsers': typeof ManageUsersIndexRoute
   '/Seguimiento': typeof SeguimientoIndexRoute
   '/SeleccionAsignaturas': typeof SeleccionAsignaturasIndexRoute
+  '/login': typeof LoginIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -54,18 +62,25 @@ export interface FileRoutesById {
   '/ManageUsers/': typeof ManageUsersIndexRoute
   '/Seguimiento/': typeof SeguimientoIndexRoute
   '/SeleccionAsignaturas/': typeof SeleccionAsignaturasIndexRoute
+  '/login/': typeof LoginIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/ManageUsers/' | '/Seguimiento/' | '/SeleccionAsignaturas/'
+  fullPaths:
+    | '/'
+    | '/ManageUsers/'
+    | '/Seguimiento/'
+    | '/SeleccionAsignaturas/'
+    | '/login/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ManageUsers' | '/Seguimiento' | '/SeleccionAsignaturas'
+  to: '/' | '/ManageUsers' | '/Seguimiento' | '/SeleccionAsignaturas' | '/login'
   id:
     | '__root__'
     | '/'
     | '/ManageUsers/'
     | '/Seguimiento/'
     | '/SeleccionAsignaturas/'
+    | '/login/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -73,6 +88,7 @@ export interface RootRouteChildren {
   ManageUsersIndexRoute: typeof ManageUsersIndexRoute
   SeguimientoIndexRoute: typeof SeguimientoIndexRoute
   SeleccionAsignaturasIndexRoute: typeof SeleccionAsignaturasIndexRoute
+  LoginIndexRoute: typeof LoginIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -82,6 +98,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login/': {
+      id: '/login/'
+      path: '/login'
+      fullPath: '/login/'
+      preLoaderRoute: typeof LoginIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/SeleccionAsignaturas/': {
@@ -113,6 +136,7 @@ const rootRouteChildren: RootRouteChildren = {
   ManageUsersIndexRoute: ManageUsersIndexRoute,
   SeguimientoIndexRoute: SeguimientoIndexRoute,
   SeleccionAsignaturasIndexRoute: SeleccionAsignaturasIndexRoute,
+  LoginIndexRoute: LoginIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
