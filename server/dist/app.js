@@ -19,6 +19,10 @@ const users_routes_js_1 = __importDefault(require("./routes/users.routes.js"));
 const nota_routes_js_1 = __importDefault(require("./routes/nota.routes.js"));
 const matricula_routes_js_1 = __importDefault(require("./routes/matricula.routes.js"));
 const audit_routes_js_1 = __importDefault(require("./routes/audit.routes.js"));
+<<<<<<< HEAD
+const reportes_routes_js_1 = __importDefault(require("./routes/reportes.routes.js"));
+=======
+>>>>>>> bc496a97905cfcd6e0d657178ba63b8ff288bbc5
 // ------- Settings de nuestro backend
 app.set('case sensitive Routing', true);
 app.set('appName', 'Express app');
@@ -39,4 +43,8 @@ app.use('/api/grupos', estudiantes_routes_js_1.default);
 app.use('/api/users', users_routes_js_1.default);
 app.use('/api/notas', nota_routes_js_1.default);
 app.use('/api/logs', audit_routes_js_1.default);
+<<<<<<< HEAD
+app.use('/api/reportes', reportes_routes_js_1.default);
+=======
+>>>>>>> bc496a97905cfcd6e0d657178ba63b8ff288bbc5
 exports.default = app;

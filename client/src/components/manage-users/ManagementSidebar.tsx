@@ -26,7 +26,7 @@ const sidebarItems: SidebarItem[] = [
   { label: 'Matriculas', icon: GraduationCap, to: '/SeleccionAsignaturas' },
   { label: 'Seguimiento', icon: UserRoundSearch, to: '/Seguimiento', allowedRoles: ['ADMINISTRADOR'] },
   { label: 'Soporte', icon: Headset },
-  { label: 'Analitica', icon: BarChart3 },
+  { label: 'Reportes', icon: BarChart3, to: '/Reportes', allowedRoles: ['ADMINISTRADOR', 'COORDINADOR', 'DOCENTE'] },
 ]
 
 type ManagementSidebarProps = {

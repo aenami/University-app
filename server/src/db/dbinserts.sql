@@ -37,16 +37,16 @@ INSERT INTO usuario (
   rol_usuario,
   documento_usuario
 ) VALUES
-('Juan', 'Perez', 'hash1', 'juan.perez@universityapp.edu.co', '3000000001', '2026-01-01', 'ACTIVO', '2000-01-01', 'MASCULINO', 'ESTUDIANTE', '1001'),
-('Ana', 'Gomez', 'hash2', 'ana.gomez@universityapp.edu.co', '3000000002', '2026-01-02', 'ACTIVO', '2001-02-02', 'FEMENINO', 'ESTUDIANTE', '1002'),
-('Carlos', 'Ruiz', 'hash3', 'carlos.ruiz@universityapp.edu.co', '3000000003', '2026-01-03', 'ACTIVO', '1998-03-03', 'MASCULINO', 'DOCENTE', '1003'),
-('Laura', 'Martinez', 'hash4', 'laura.martinez@universityapp.edu.co', '3000000004', '2026-01-04', 'ACTIVO', '1995-04-04', 'FEMENINO', 'ADMINISTRADOR', '1004'),
-('Pedro', 'Lopez', 'hash5', 'pedro.lopez@universityapp.edu.co', '3000000005', '2026-01-05', 'ACTIVO', '1990-05-05', 'MASCULINO', 'COORDINADOR', '1005'),
-('Luisa', 'Fernandez', 'hash6', 'luisa.fernandez@universityapp.edu.co', '3000000006', '2026-01-06', 'ACTIVO', '2002-06-06', 'FEMENINO', 'ESTUDIANTE', '1006'),
-('Mario', 'Torres', 'hash7', 'mario.torres@universityapp.edu.co', '3000000007', '2026-01-07', 'ACTIVO', '1999-07-07', 'MASCULINO', 'DOCENTE', '1007'),
-('Sofia', 'Ramirez', 'hash8', 'sofia.ramirez@universityapp.edu.co', '3000000008', '2026-01-08', 'ACTIVO', '1997-08-08', 'FEMENINO', 'ADMINISTRADOR', '1008'),
-('Andres', 'Castro', 'hash9', 'andres.castro@universityapp.edu.co', '3000000009', '2026-01-09', 'ACTIVO', '2001-09-09', 'MASCULINO', 'ESTUDIANTE', '1009'),
-('Camila', 'Moreno', 'hash10', 'camila.moreno@universityapp.edu.co', '3000000010', '2026-01-10', 'ACTIVO', '2000-10-10', 'FEMENINO', 'COORDINADOR', '1010');
+('Juan', 'Perez', '$2b$12$GhsFq0LyafWt9BSAMu0iSe.F28JlTWZXRGJXf2WpFU2vtAT0IZMwi', 'juan.perez@universityapp.edu.co', '3000000001', '2026-01-01', 'ACTIVO', '2000-01-01', 'MASCULINO', 'ESTUDIANTE', '1001'),
+('Ana', 'Gomez', '$2b$12$GhsFq0LyafWt9BSAMu0iSe.F28JlTWZXRGJXf2WpFU2vtAT0IZMwi', 'ana.gomez@universityapp.edu.co', '3000000002', '2026-01-02', 'ACTIVO', '2001-02-02', 'FEMENINO', 'ESTUDIANTE', '1002'),
+('Carlos', 'Ruiz', '$2b$12$GhsFq0LyafWt9BSAMu0iSe.F28JlTWZXRGJXf2WpFU2vtAT0IZMwi', 'carlos.ruiz@universityapp.edu.co', '3000000003', '2026-01-03', 'ACTIVO', '1998-03-03', 'MASCULINO', 'DOCENTE', '1003'),
+('Laura', 'Martinez', '$2b$12$GhsFq0LyafWt9BSAMu0iSe.F28JlTWZXRGJXf2WpFU2vtAT0IZMwi', 'laura.martinez@universityapp.edu.co', '3000000004', '2026-01-04', 'ACTIVO', '1995-04-04', 'FEMENINO', 'ADMINISTRADOR', '1004'),
+('Pedro', 'Lopez', '$2b$12$GhsFq0LyafWt9BSAMu0iSe.F28JlTWZXRGJXf2WpFU2vtAT0IZMwi', 'pedro.lopez@universityapp.edu.co', '3000000005', '2026-01-05', 'ACTIVO', '1990-05-05', 'MASCULINO', 'COORDINADOR', '1005'),
+('Luisa', 'Fernandez', '$2b$12$GhsFq0LyafWt9BSAMu0iSe.F28JlTWZXRGJXf2WpFU2vtAT0IZMwi', 'luisa.fernandez@universityapp.edu.co', '3000000006', '2026-01-06', 'ACTIVO', '2002-06-06', 'FEMENINO', 'ESTUDIANTE', '1006'),
+('Mario', 'Torres', '$2b$12$GhsFq0LyafWt9BSAMu0iSe.F28JlTWZXRGJXf2WpFU2vtAT0IZMwi', 'mario.torres@universityapp.edu.co', '3000000007', '2026-01-07', 'ACTIVO', '1999-07-07', 'MASCULINO', 'DOCENTE', '1007'),
+('Sofia', 'Ramirez', '$2b$12$GhsFq0LyafWt9BSAMu0iSe.F28JlTWZXRGJXf2WpFU2vtAT0IZMwi', 'sofia.ramirez@universityapp.edu.co', '3000000008', '2026-01-08', 'ACTIVO', '1997-08-08', 'FEMENINO', 'ADMINISTRADOR', '1008'),
+('Andres', 'Castro', '$2b$12$GhsFq0LyafWt9BSAMu0iSe.F28JlTWZXRGJXf2WpFU2vtAT0IZMwi', 'andres.castro@universityapp.edu.co', '3000000009', '2026-01-09', 'ACTIVO', '2001-09-09', 'MASCULINO', 'ESTUDIANTE', '1009'),
+('Camila', 'Moreno', '$2b$12$GhsFq0LyafWt9BSAMu0iSe.F28JlTWZXRGJXf2WpFU2vtAT0IZMwi', 'camila.moreno@universityapp.edu.co', '3000000010', '2026-01-10', 'ACTIVO', '2000-10-10', 'FEMENINO', 'COORDINADOR', '1010');
 
 -- ============================================================
 -- INSERTS TABLA LOG_AUDITORIA

@@ -3,12 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.authenticateUser = void 0;
 const tokenService_js_1 = require("../services/tokenService.js");
 const authenticateUser = (req, res, next) => {
-    // Permitimos un bypass controlado solo para desarrollo local mientras el login no esta listo.
-    if (process.env.ALLOW_DEV_AUTH_BYPASS === "true") {
-        req.idUser = 1;
-        req.rolUser = "ADMINISTRADOR";
-        return next();
-    }
     // 1. Extraemos el header Authorization enviado por el frontend.
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {

@@ -114,7 +114,7 @@ const loginUser = async (req, res) => {
         console.log('Error al logear el usuario', error);
         return res.status(500).json({
             error: true,
-            message: error
+            message: error instanceof Error ? error.message : 'Error interno al iniciar sesion'
         });
     }
 };
