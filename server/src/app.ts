@@ -15,7 +15,10 @@ import usersRoutes from './routes/users.routes.js'
 import notaRoutes from './routes/nota.routes.js'
 import matriculaRoutes from './routes/matricula.routes.js'
 import auditRoutes from './routes/audit.routes.js'
+<<<<<<< HEAD
 import reportesRoutes from './routes/reportes.routes.js'
+=======
+>>>>>>> bc496a97905cfcd6e0d657178ba63b8ff288bbc5
 
 
 // ------- Settings de nuestro backend
@@ -43,6 +46,9 @@ app.use('/api/grupos', studentsRoutes)
 app.use('/api/users', usersRoutes)
 app.use('/api/notas', notaRoutes)
 app.use('/api/logs', auditRoutes)
+<<<<<<< HEAD
 app.use('/api/reportes', reportesRoutes)
+=======
+>>>>>>> bc496a97905cfcd6e0d657178ba63b8ff288bbc5
 
 export default app

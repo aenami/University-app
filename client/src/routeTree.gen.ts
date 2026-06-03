@@ -13,7 +13,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
 import { Route as SeleccionAsignaturasIndexRouteImport } from './routes/SeleccionAsignaturas/index'
 import { Route as SeguimientoIndexRouteImport } from './routes/Seguimiento/index'
+<<<<<<< HEAD
 import { Route as ReportesIndexRouteImport } from './routes/Reportes/index'
+=======
+>>>>>>> bc496a97905cfcd6e0d657178ba63b8ff288bbc5
 import { Route as ManageUsersIndexRouteImport } from './routes/ManageUsers/index'
 import { Route as ManageStudentsIndexRouteImport } from './routes/ManageStudents/index'
 
@@ -38,11 +41,14 @@ const SeguimientoIndexRoute = SeguimientoIndexRouteImport.update({
   path: '/Seguimiento/',
   getParentRoute: () => rootRouteImport,
 } as any)
+<<<<<<< HEAD
 const ReportesIndexRoute = ReportesIndexRouteImport.update({
   id: '/Reportes/',
   path: '/Reportes/',
   getParentRoute: () => rootRouteImport,
 } as any)
+=======
+>>>>>>> bc496a97905cfcd6e0d657178ba63b8ff288bbc5
 const ManageUsersIndexRoute = ManageUsersIndexRouteImport.update({
   id: '/ManageUsers/',
   path: '/ManageUsers/',
@@ -58,7 +64,10 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ManageStudents/': typeof ManageStudentsIndexRoute
   '/ManageUsers/': typeof ManageUsersIndexRoute
+<<<<<<< HEAD
   '/Reportes/': typeof ReportesIndexRoute
+=======
+>>>>>>> bc496a97905cfcd6e0d657178ba63b8ff288bbc5
   '/Seguimiento/': typeof SeguimientoIndexRoute
   '/SeleccionAsignaturas/': typeof SeleccionAsignaturasIndexRoute
   '/login/': typeof LoginIndexRoute
@@ -67,7 +76,10 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ManageStudents': typeof ManageStudentsIndexRoute
   '/ManageUsers': typeof ManageUsersIndexRoute
+<<<<<<< HEAD
   '/Reportes': typeof ReportesIndexRoute
+=======
+>>>>>>> bc496a97905cfcd6e0d657178ba63b8ff288bbc5
   '/Seguimiento': typeof SeguimientoIndexRoute
   '/SeleccionAsignaturas': typeof SeleccionAsignaturasIndexRoute
   '/login': typeof LoginIndexRoute
@@ -77,7 +89,10 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/ManageStudents/': typeof ManageStudentsIndexRoute
   '/ManageUsers/': typeof ManageUsersIndexRoute
+<<<<<<< HEAD
   '/Reportes/': typeof ReportesIndexRoute
+=======
+>>>>>>> bc496a97905cfcd6e0d657178ba63b8ff288bbc5
   '/Seguimiento/': typeof SeguimientoIndexRoute
   '/SeleccionAsignaturas/': typeof SeleccionAsignaturasIndexRoute
   '/login/': typeof LoginIndexRoute
@@ -88,7 +103,10 @@ export interface FileRouteTypes {
     | '/'
     | '/ManageStudents/'
     | '/ManageUsers/'
+<<<<<<< HEAD
     | '/Reportes/'
+=======
+>>>>>>> bc496a97905cfcd6e0d657178ba63b8ff288bbc5
     | '/Seguimiento/'
     | '/SeleccionAsignaturas/'
     | '/login/'
@@ -97,7 +115,10 @@ export interface FileRouteTypes {
     | '/'
     | '/ManageStudents'
     | '/ManageUsers'
+<<<<<<< HEAD
     | '/Reportes'
+=======
+>>>>>>> bc496a97905cfcd6e0d657178ba63b8ff288bbc5
     | '/Seguimiento'
     | '/SeleccionAsignaturas'
     | '/login'
@@ -106,7 +127,10 @@ export interface FileRouteTypes {
     | '/'
     | '/ManageStudents/'
     | '/ManageUsers/'
+<<<<<<< HEAD
     | '/Reportes/'
+=======
+>>>>>>> bc496a97905cfcd6e0d657178ba63b8ff288bbc5
     | '/Seguimiento/'
     | '/SeleccionAsignaturas/'
     | '/login/'
@@ -116,7 +140,10 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ManageStudentsIndexRoute: typeof ManageStudentsIndexRoute
   ManageUsersIndexRoute: typeof ManageUsersIndexRoute
+<<<<<<< HEAD
   ReportesIndexRoute: typeof ReportesIndexRoute
+=======
+>>>>>>> bc496a97905cfcd6e0d657178ba63b8ff288bbc5
   SeguimientoIndexRoute: typeof SeguimientoIndexRoute
   SeleccionAsignaturasIndexRoute: typeof SeleccionAsignaturasIndexRoute
   LoginIndexRoute: typeof LoginIndexRoute
@@ -152,6 +179,7 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SeguimientoIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+<<<<<<< HEAD
     '/Reportes/': {
       id: '/Reportes/'
       path: '/Reportes'
@@ -159,6 +187,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ReportesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+=======
+>>>>>>> bc496a97905cfcd6e0d657178ba63b8ff288bbc5
     '/ManageUsers/': {
       id: '/ManageUsers/'
       path: '/ManageUsers'
@@ -180,7 +210,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ManageStudentsIndexRoute: ManageStudentsIndexRoute,
   ManageUsersIndexRoute: ManageUsersIndexRoute,
+<<<<<<< HEAD
   ReportesIndexRoute: ReportesIndexRoute,
+=======
+>>>>>>> bc496a97905cfcd6e0d657178ba63b8ff288bbc5
   SeguimientoIndexRoute: SeguimientoIndexRoute,
   SeleccionAsignaturasIndexRoute: SeleccionAsignaturasIndexRoute,
   LoginIndexRoute: LoginIndexRoute,

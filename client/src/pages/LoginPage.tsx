@@ -113,16 +113,25 @@ export function LoginPage() {
               
               {/* Campo Email */}
               <div className="space-y-2">
+<<<<<<< HEAD
                 <label htmlFor="login-email" className="block text-xs font-extrabold tracking-wide text-slate-700 uppercase">
+=======
+                <label className="block text-xs font-extrabold tracking-wide text-slate-700 uppercase">
+>>>>>>> bc496a97905cfcd6e0d657178ba63b8ff288bbc5
                   Correo Electrónico
                 </label>
                 <div className="relative flex items-center">
                   <Mail className="absolute left-4 h-5 w-5 text-slate-400" />
                   <input
+<<<<<<< HEAD
                     id="login-email"
                     type="email"
                     name="email"
                     autoComplete="email"
+=======
+                    type="email"
+                    name="email"
+>>>>>>> bc496a97905cfcd6e0d657178ba63b8ff288bbc5
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -135,17 +144,26 @@ export function LoginPage() {
               {/* Campo Contraseña */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
+<<<<<<< HEAD
                   <label htmlFor="login-password" className="block text-xs font-extrabold tracking-wide text-slate-700 uppercase">
+=======
+                  <label className="block text-xs font-extrabold tracking-wide text-slate-700 uppercase">
+>>>>>>> bc496a97905cfcd6e0d657178ba63b8ff288bbc5
                     Contraseña
                   </label>
                 </div>
                 <div className="relative flex items-center">
                   <Lock className="absolute left-4 h-5 w-5 text-slate-400" />
                   <input
+<<<<<<< HEAD
                     id="login-password"
                     type={showPassword ? 'text' : 'password'}
                     name="password"
                     autoComplete="current-password"
+=======
+                    type={showPassword ? 'text' : 'password'}
+                    name="password"
+>>>>>>> bc496a97905cfcd6e0d657178ba63b8ff288bbc5
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
