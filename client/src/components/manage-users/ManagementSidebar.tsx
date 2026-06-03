@@ -35,8 +35,11 @@ export function ManagementSidebar({ activeItem }: ManagementSidebarProps) {
   const handleLogout = () => {
     // Limpiamos la sesion y devolvemos al punto de entrada actual.
     tokenManager.clearSession()
-    window.location.href = '/'
+    window.location.href = '/login'
   }
+
+  const user = tokenManager.getUser()
+  const role = tokenManager.getUserRole()
 
   return (
     <aside className="flex min-h-screen flex-col bg-white px-5 py-14">
@@ -93,10 +96,17 @@ export function ManagementSidebar({ activeItem }: ManagementSidebarProps) {
         })}
       </nav>
 
+      {user && (
+        <div className="mt-auto border-t border-slate-100 pt-5 px-3">
+          <p className="text-sm font-bold text-slate-800 truncate">{user.nombre}</p>
+          <p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{role || 'Usuario'}</p>
+        </div>
+      )}
+
       <button
         type="button"
         onClick={handleLogout}
-        className="mt-auto flex w-full items-center gap-3 px-5 py-4 text-sm font-semibold text-slate-600 transition hover:text-slate-900"
+        className={`${user ? 'mt-3' : 'mt-auto'} flex w-full items-center gap-3 px-5 py-4 text-sm font-semibold text-slate-600 transition hover:text-slate-900`}
       >
         <LogOut className="h-5 w-5" />
         Cerrar Sesion
