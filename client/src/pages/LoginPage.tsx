@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useState } from 'react'
 import { GraduationCap, Lock, Mail, ShieldAlert, ArrowRight, Eye, EyeOff } from 'lucide-react'
 import { api } from '../services/Api'
 import { tokenManager } from '../utils/tokenManager'
@@ -18,10 +18,8 @@ export function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
-  // Manejador del submit de login
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    
+  // Manejador del submit de login utilizando React 19 Form Actions
+  const handleLoginAction = async () => {
     // Validación local básica
     if (!email.trim() || !password.trim()) {
       setErrorMsg('Por favor completa todos los campos obligatorios.')
@@ -111,7 +109,7 @@ export function LoginPage() {
             )}
 
             {/* Formulario de Login */}
-            <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+            <form action={handleLoginAction} className="mt-8 space-y-6">
               
               {/* Campo Email */}
               <div className="space-y-2">
@@ -122,6 +120,7 @@ export function LoginPage() {
                   <Mail className="absolute left-4 h-5 w-5 text-slate-400" />
                   <input
                     type="email"
+                    name="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -142,6 +141,7 @@ export function LoginPage() {
                   <Lock className="absolute left-4 h-5 w-5 text-slate-400" />
                   <input
                     type={showPassword ? 'text' : 'password'}
+                    name="password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
