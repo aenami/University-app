@@ -13,6 +13,9 @@ import corteRoutes from './routes/corte.routes.js'
 import studentsRoutes from './routes/estudiantes.routes.js'
 import usersRoutes from './routes/users.routes.js'
 import notaRoutes from './routes/nota.routes.js'
+import matriculaRoutes from './routes/matricula.routes.js'
+import auditRoutes from './routes/audit.routes.js'
+import preMatriculaRoutes from "./routes/preMatricula.routes.js";
 
 
 // ------- Settings de nuestro backend
@@ -23,7 +26,7 @@ app.set('port', process.env.PORT) // -----TRAER EL PUERTO CON UNA VARIBALE DE EN
 
 // ------- MIDDLEWARES ------
 app.use(cors( {
-    origin: "http://localhost:5173"
+    origin: ["http://localhost:5173", "http://127.0.0.1:5173"]
 } ))
 app.use(express.json())
 app.use(express.urlencoded( {extended: false} ))
@@ -34,9 +37,12 @@ app.use('/api/oferta-academica', ofertaAcademicaRoutes)
 app.use('/api/auth', authRoutes)
 app.use('/api/groups', groupRoutes)
 app.use('/api/cortes', corteRoutes)
+app.use('/api/matriculas', matriculaRoutes)
 
 app.use('/api/grupos', studentsRoutes)
 app.use('/api/users', usersRoutes)
 app.use('/api/notas', notaRoutes)
+app.use('/api/logs', auditRoutes)
+app.use("/api/prematriculas", preMatriculaRoutes);
 
 export default app

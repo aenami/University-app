@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import { getConnection } from "../config/db";
+import { getConnection } from "../config/db.js";
 import { PoolConnection, RowDataPacket, ResultSetHeader } from "mysql2/promise";
 import { validarCoherenciaPrematricula } from "../services/validacionAcademica.service.js";
+import AuditLog from "../models/AuditLog.js";
 
 
 
@@ -193,6 +194,15 @@ export const crearMatricula = async (req: Request, res: Response): Promise<void>
             `INSERT INTO detalle_matricula (id_matricula, id_grupo) VALUES ?`,
             [valoresDetalle]
         );
+
+        // ── 8.5 Registrar log de auditoría para la matrícula ──
+        if (req.idUser) {
+            await AuditLog.createLog(
+                `Registro de matricula #${idMatriculaCreada} para el estudiante #${id_estudiante} (Programa: ${id_programa}, Creditos: ${totalCreditos}, Precio: ${precioTotal.toFixed(2)})`,
+                req.idUser,
+                connection
+            );
+        }
 
         // ── 9. Confirmar transacción ───────────────────────────
         await connection.commit();

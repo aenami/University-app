@@ -8,29 +8,40 @@ import {
   UserRoundSearch,
   UsersRound,
 } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
 import { tokenManager } from '../../utils/tokenManager'
 
 type SidebarItem = {
   label: string
   icon: typeof ShieldCheck
   active?: boolean
+  to?: string
+  allowedRoles?: string[]
 }
 
 const sidebarItems: SidebarItem[] = [
-  { label: 'Seguridad', icon: ShieldCheck, active: true },
-  { label: 'Oferta academica', icon: BookOpen },
-  { label: 'Matriculas', icon: GraduationCap },
-  { label: 'Seguimiento', icon: UserRoundSearch },
+  { label: 'Seguridad', icon: ShieldCheck, active: true, to: '/ManageUsers', allowedRoles: ['ADMINISTRADOR', 'COORDINADOR'] },
+  { label: 'Estudiantes', icon: UsersRound, to: '/ManageStudents', allowedRoles: ['ADMINISTRADOR'] },
+  { label: 'Oferta academica', icon: BookOpen, allowedRoles: ['ADMINISTRADOR', 'COORDINADOR', 'DOCENTE'] },
+  { label: 'Matriculas', icon: GraduationCap, to: '/SeleccionAsignaturas' },
+  { label: 'Seguimiento', icon: UserRoundSearch, to: '/Seguimiento', allowedRoles: ['ADMINISTRADOR'] },
   { label: 'Soporte', icon: Headset },
   { label: 'Analitica', icon: BarChart3 },
 ]
 
-export function ManagementSidebar() {
+type ManagementSidebarProps = {
+  activeItem?: string
+}
+
+export function ManagementSidebar({ activeItem }: ManagementSidebarProps) {
   const handleLogout = () => {
     // Limpiamos la sesion y devolvemos al punto de entrada actual.
     tokenManager.clearSession()
-    window.location.href = '/'
+    window.location.href = '/login'
   }
+
+  const user = tokenManager.getUser()
+  const role = tokenManager.getUserRole()
 
   return (
     <aside className="flex min-h-screen flex-col bg-white px-5 py-14">
@@ -51,31 +62,55 @@ export function ManagementSidebar() {
       </div>
 
       <nav className="mt-10 space-y-2">
-        {sidebarItems.map((item) => {
+        {sidebarItems
+          .filter((item) => !item.allowedRoles || (role && item.allowedRoles.includes(role)))
+          .map((item) => {
           const Icon = item.icon
+          const isActive = activeItem ? item.label === activeItem : item.active
+          const itemClassName = [
+            'flex w-full items-center gap-3 rounded-xl px-5 py-4 text-left transition-all',
+            isActive
+              ? 'border-l-4 border-[var(--brand-navy)] bg-[#dcebff] pl-4 text-[var(--brand-navy)]'
+              : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900',
+          ].join(' ')
+          const itemContent = (
+            <>
+              <Icon className="h-5 w-5 shrink-0" />
+              <span className="flex-1 text-sm font-semibold">{item.label}</span>
+            </>
+          )
+
+          if (item.to) {
+            return (
+              <Link key={item.label} to={item.to} className={itemClassName}>
+                {itemContent}
+              </Link>
+            )
+          }
 
           return (
             <button
               key={item.label}
               type="button"
-              className={[
-                'flex w-full items-center gap-3 rounded-xl px-5 py-4 text-left transition-all',
-                item.active
-                  ? 'border-l-4 border-[var(--brand-navy)] bg-[#dcebff] pl-4 text-[var(--brand-navy)]'
-                  : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900',
-              ].join(' ')}
+              className={itemClassName}
             >
-              <Icon className="h-5 w-5 shrink-0" />
-              <span className="flex-1 text-sm font-semibold">{item.label}</span>
+              {itemContent}
             </button>
           )
         })}
       </nav>
 
+      {user && (
+        <div className="mt-auto border-t border-slate-100 pt-5 px-3">
+          <p className="text-sm font-bold text-slate-800 truncate">{user.nombre}</p>
+          <p className="text-[0.65rem] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{role || 'Usuario'}</p>
+        </div>
+      )}
+
       <button
         type="button"
         onClick={handleLogout}
-        className="mt-auto flex w-full items-center gap-3 px-5 py-4 text-sm font-semibold text-slate-600 transition hover:text-slate-900"
+        className={`${user ? 'mt-3' : 'mt-auto'} flex w-full items-center gap-3 px-5 py-4 text-sm font-semibold text-slate-600 transition hover:text-slate-900`}
       >
         <LogOut className="h-5 w-5" />
         Cerrar Sesion

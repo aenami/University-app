@@ -1,8 +1,11 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.obtenerMatricula = exports.crearMatricula = void 0;
-const db_1 = require("../config/db");
-const validacionAcademica_service_js_1 = require("../services/validacionAcademica.service.js");
+const db_js_1 = require("../config/db.js");
+const AuditLog_js_1 = __importDefault(require("../models/AuditLog.js"));
 // ============================================================
 // POST /matriculas
 // Guardar matrícula + detalle_matricula desde selección del estudiante
@@ -17,7 +20,7 @@ const crearMatricula = async (req, res) => {
         });
         return;
     }
-    const pool = (0, db_1.getConnection)();
+    const pool = (0, db_js_1.getConnection)();
     let connection = null;
     try {
         connection = await pool.getConnection();
@@ -76,16 +79,6 @@ const crearMatricula = async (req, res) => {
             }
         }
         // ── 4. Calcular total de créditos ──────────────────────
-        const validacionAcademica = await (0, validacionAcademica_service_js_1.validarCoherenciaPrematricula)(id_estudiante, idsGrupos, connection);
-        if (!validacionAcademica.valido) {
-            await connection.rollback();
-            res.status(400).json({
-                ok: false,
-                mensaje: validacionAcademica.mensaje,
-                faltantes: validacionAcademica.faltantes ?? []
-            });
-            return;
-        }
         const totalCreditos = grupos.reduce((sum, g) => sum + g.creditos, 0);
         // ── 5. Calcular precio base (asumimos precio fijo por crédito) ─
         //       Ajusta PRECIO_POR_CREDITO según tu lógica de negocio
@@ -123,6 +116,10 @@ const crearMatricula = async (req, res) => {
         // ── 8. Insertar cada fila en DETALLE_MATRICULA ─────────
         const valoresDetalle = detalles.map(d => [idMatriculaCreada, d.id_grupo]);
         await connection.query(`INSERT INTO detalle_matricula (id_matricula, id_grupo) VALUES ?`, [valoresDetalle]);
+        // ── 8.5 Registrar log de auditoría para la matrícula ──
+        if (req.idUser) {
+            await AuditLog_js_1.default.createLog(`Registro de matricula #${idMatriculaCreada} para el estudiante #${id_estudiante} (Programa: ${id_programa}, Creditos: ${totalCreditos}, Precio: ${precioTotal.toFixed(2)})`, req.idUser, connection);
+        }
         // ── 9. Confirmar transacción ───────────────────────────
         await connection.commit();
         res.status(201).json({
@@ -175,7 +172,7 @@ const obtenerMatricula = async (req, res) => {
         res.status(400).json({ ok: false, mensaje: "ID de matrícula inválido" });
         return;
     }
-    const pool = (0, db_1.getConnection)();
+    const pool = (0, db_js_1.getConnection)();
     try {
         // Cabecera de la matrícula
         const [matriculas] = await pool.query(`SELECT

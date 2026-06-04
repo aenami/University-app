@@ -3,12 +3,14 @@ import { Bell, Search, Settings2 } from 'lucide-react'
 type ManagementTopbarProps = {
   searchValue: string
   userName: string
+  searchPlaceholder?: string
   onSearchChange: (value: string) => void
 }
 
 export function ManagementTopbar({
   searchValue,
   userName,
+  searchPlaceholder = 'Buscar usuarios...',
   onSearchChange,
 }: ManagementTopbarProps) {
   return (
@@ -18,7 +20,7 @@ export function ManagementTopbar({
         <input
           value={searchValue}
           onChange={(event) => onSearchChange(event.target.value)}
-          placeholder="Buscar usuarios..."
+          placeholder={searchPlaceholder}
           className="w-full border-none bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400"
         />
       </label>

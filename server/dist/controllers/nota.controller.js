@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.editarNota = exports.obtenerNotasPorGrupo = exports.registrarNota = void 0;
 const Nota_js_1 = __importDefault(require("../models/Nota.js"));
+const AuditLog_js_1 = __importDefault(require("../models/AuditLog.js"));
 // ============================================================
 // POST /api/notas
 // Registrar nota por estudiante (solo docente)
@@ -50,6 +51,10 @@ const registrarNota = async (req, res) => {
         }
         // 5. Crear nota
         const id_nota = await Nota_js_1.default.crearNota(valor, id_asignatura, id_corte, id_docente);
+        // 5.5 Registrar log de auditoría para la creación de nota
+        if (req.idUser) {
+            await AuditLog_js_1.default.createLog(`Registro de nota ID: ${id_nota} con valor ${valor} para el estudiante #${id_estudiante} (Asignatura: ${id_asignatura}, Corte: ${id_corte})`, req.idUser);
+        }
         return res.status(201).json({
             error: false,
             message: "Nota registrada exitosamente",
@@ -132,6 +137,10 @@ const editarNota = async (req, res) => {
         const id_administrador = await Nota_js_1.default.getAdminByUsuario(req.idUser);
         if (id_administrador) {
             await Nota_js_1.default.crearAuditoriaNote(valorAnterior, valor, id_administrador, idNota);
+        }
+        // 4.5 Registrar log de auditoría general para la edición de nota
+        if (req.idUser) {
+            await AuditLog_js_1.default.createLog(`Modificacion de nota ID: ${idNota} - Valor anterior: ${valorAnterior} a Nuevo valor: ${valor}`, req.idUser);
         }
         return res.status(200).json({
             error: false,

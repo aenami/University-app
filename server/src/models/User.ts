@@ -87,6 +87,17 @@ interface TypeUser {
         status: ManagedUserStatus,
         executor?: UserExecutor
     ) => Promise<boolean>;
+    getStudents: (search?: string) => Promise<ManagedUser[]>;
+    getStudentById: (userId: number) => Promise<ManagedUser | undefined>;
+    updateStudentStatus: (
+        userId: number,
+        status: ManagedUserStatus,
+        executor?: UserExecutor
+    ) => Promise<boolean>;
+    createStudentRelation: (
+        userId: number,
+        executor: UserExecutor
+    ) => Promise<number>;
 }
 
 const User: TypeUser = {
@@ -318,6 +329,122 @@ const User: TypeUser = {
             return result.affectedRows > 0;
         } catch (error) {
             console.log("Error al actualizar el estado del usuario");
+            throw error;
+        }
+    },
+
+    async getStudents(search) {
+        try {
+            const queryParts = [
+                `
+                    SELECT
+                        u.id_usuario,
+                        u.nombres_usuario,
+                        u.apellidos_usuario,
+                        u.email_usuario,
+                        u.documento_usuario,
+                        u.rol_usuario,
+                        u.estado_usuario,
+                        u.genero_usuario,
+                        u.fecha_nacimiento_usuario,
+                        u.fecha_creacion_usuario
+                    FROM usuario u
+                    INNER JOIN estudiante e ON u.id_usuario = e.id_usuario
+                    WHERE u.rol_usuario = 'ESTUDIANTE'
+                `,
+            ];
+
+            const values: Array<string> = [];
+
+            if (search?.trim()) {
+                queryParts.push(`
+                    AND (
+                        CONCAT(u.nombres_usuario, ' ', u.apellidos_usuario) LIKE ?
+                        OR u.email_usuario LIKE ?
+                        OR u.documento_usuario LIKE ?
+                    )
+                `);
+
+                const searchTerm = `%${search.trim()}%`;
+                values.push(searchTerm, searchTerm, searchTerm);
+            }
+
+            queryParts.push("ORDER BY u.fecha_creacion_usuario DESC, u.id_usuario DESC");
+
+            const db = getConnection();
+            const [rows] = await db.query<ManagedUserRow[]>(queryParts.join("\n"), values);
+
+            return rows.map(mapManagedUser);
+        } catch (error) {
+            console.log("Error al consultar los estudiantes en el modelo");
+            throw error;
+        }
+    },
+
+    async getStudentById(userId) {
+        try {
+            const query = `
+                SELECT
+                    u.id_usuario,
+                    u.nombres_usuario,
+                    u.apellidos_usuario,
+                    u.email_usuario,
+                    u.documento_usuario,
+                    u.rol_usuario,
+                    u.estado_usuario,
+                    u.genero_usuario,
+                    u.fecha_nacimiento_usuario,
+                    u.fecha_creacion_usuario
+                FROM usuario u
+                INNER JOIN estudiante e ON u.id_usuario = e.id_usuario
+                WHERE u.id_usuario = ?
+                AND u.rol_usuario = 'ESTUDIANTE'
+            `;
+
+            const values = [userId];
+            const db = getConnection();
+            const [rows] = await db.query<ManagedUserRow[]>(query, values);
+
+            if (rows.length === 0) {
+                return undefined;
+            }
+
+            return mapManagedUser(rows[0]);
+        } catch (error) {
+            console.log("Error al consultar el estudiante solicitado");
+            throw error;
+        }
+    },
+
+    async updateStudentStatus(userId, status, executor) {
+        try {
+            const query = `
+                UPDATE usuario u
+                INNER JOIN estudiante e ON u.id_usuario = e.id_usuario
+                SET u.estado_usuario = ?
+                WHERE u.id_usuario = ?
+                AND u.rol_usuario = 'ESTUDIANTE'
+            `;
+
+            const values = [status, userId];
+            const db = executor ?? getConnection();
+            const [result] = await db.query<ResultSetHeader>(query, values);
+
+            return result.affectedRows > 0;
+        } catch (error) {
+            console.log("Error al actualizar el estado del estudiante");
+            throw error;
+        }
+    },
+
+    async createStudentRelation(userId, executor) {
+        try {
+            const query = "INSERT INTO estudiante (id_usuario) VALUES (?)";
+            const values = [userId];
+            const [result] = await executor.query<ResultSetHeader>(query, values);
+            return result.insertId;
+        } catch (error) {
+            console.log("Error al crear la relacion de estudiante en la db");
             throw error;
         }
     },
