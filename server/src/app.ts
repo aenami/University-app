@@ -15,6 +15,7 @@ import usersRoutes from './routes/users.routes.js'
 import notaRoutes from './routes/nota.routes.js'
 import matriculaRoutes from './routes/matricula.routes.js'
 import auditRoutes from './routes/audit.routes.js'
+import preMatriculaRoutes from "./routes/preMatricula.routes.js";
 
 
 // ------- Settings de nuestro backend
@@ -42,5 +43,6 @@ app.use('/api/grupos', studentsRoutes)
 app.use('/api/users', usersRoutes)
 app.use('/api/notas', notaRoutes)
 app.use('/api/logs', auditRoutes)
+app.use("/api/prematriculas", preMatriculaRoutes);
 
 export default app
