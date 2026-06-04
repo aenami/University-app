@@ -21,6 +21,10 @@ const sendValidationError = (res: Response, message: string) => {
     });
 };
 
+const isEndTimeAfterStartTime = (horaInicio: string, horaFin: string) => {
+    return horaFin > horaInicio;
+};
+
 export const crearPrograma = async (req: Request, res: Response) => {
     try {
         const { nombre, tipoPrograma = "Carreras", facultad } = req.body;
@@ -29,10 +33,22 @@ export const crearPrograma = async (req: Request, res: Response) => {
             return sendValidationError(res, "Nombre, tipoPrograma y facultad son obligatorios");
         }
 
+        const nombrePrograma = nombre.trim();
+        const tipoProgramaNormalizado = tipoPrograma.trim();
+        const facultadPrograma = facultad.trim();
+        const programaDuplicado = await OfertaAcademica.existeProgramaPorNombre(nombrePrograma);
+
+        if (programaDuplicado) {
+            return res.status(409).json({
+                error: true,
+                message: "Ya existe un programa academico con ese nombre",
+            });
+        }
+
         const idPrograma = await OfertaAcademica.crearPrograma({
-            nombre: nombre.trim(),
-            tipoPrograma: tipoPrograma.trim(),
-            facultad: facultad.trim(),
+            nombre: nombrePrograma,
+            tipoPrograma: tipoProgramaNormalizado,
+            facultad: facultadPrograma,
         });
 
         return res.status(201).json({
@@ -79,8 +95,18 @@ export const crearAsignatura = async (req: Request, res: Response) => {
             return sendValidationError(res, "Los creditos de la asignatura deben ser un numero entero mayor que cero");
         }
 
+        const nombreAsignatura = nombre.trim();
+        const asignaturaDuplicada = await OfertaAcademica.existeAsignaturaPorNombre(nombreAsignatura);
+
+        if (asignaturaDuplicada) {
+            return res.status(409).json({
+                error: true,
+                message: "Ya existe una asignatura con ese nombre",
+            });
+        }
+
         const idAsignatura = await OfertaAcademica.crearAsignatura({
-            nombre: nombre.trim(),
+            nombre: nombreAsignatura,
             creditos,
         });
 
@@ -116,6 +142,121 @@ export const consultarAsignaturas = async (_req: Request, res: Response) => {
     }
 };
 
+export const crearPrerrequisito = async (req: Request, res: Response) => {
+    try {
+        const idAsignatura = parsePositiveInteger(req.params.idAsignatura);
+        const { idAsignaturaRequisito } = req.body;
+
+        if (!idAsignatura) {
+            return sendValidationError(res, "idAsignatura debe ser un numero entero mayor que cero");
+        }
+
+        if (!isPositiveInteger(idAsignaturaRequisito)) {
+            return sendValidationError(res, "idAsignaturaRequisito debe ser un numero entero mayor que cero");
+        }
+
+        if (idAsignatura === idAsignaturaRequisito) {
+            return sendValidationError(res, "Una asignatura no puede ser prerrequisito de si misma");
+        }
+
+        const [asignaturaExiste, requisitoExiste, prerrequisitoDuplicado, generaCiclo] = await Promise.all([
+            OfertaAcademica.existeAsignatura(idAsignatura),
+            OfertaAcademica.existeAsignatura(idAsignaturaRequisito),
+            OfertaAcademica.existePrerrequisito(idAsignatura, idAsignaturaRequisito),
+            OfertaAcademica.existeCicloPrerrequisito(idAsignatura, idAsignaturaRequisito),
+        ]);
+
+        if (!asignaturaExiste) {
+            return res.status(404).json({
+                error: true,
+                message: "No existe la asignatura principal indicada",
+            });
+        }
+
+        if (!requisitoExiste) {
+            return res.status(404).json({
+                error: true,
+                message: "No existe la asignatura prerrequisito indicada",
+            });
+        }
+
+        if (prerrequisitoDuplicado) {
+            return res.status(409).json({
+                error: true,
+                message: "La asignatura ya tiene asociado ese prerrequisito",
+            });
+        }
+
+        if (generaCiclo) {
+            return res.status(409).json({
+                error: true,
+                message: "No se puede asociar el prerrequisito porque genera un ciclo academico",
+            });
+        }
+
+        const idPrerrequisito = await OfertaAcademica.crearPrerrequisito(idAsignatura, idAsignaturaRequisito);
+
+        return res.status(201).json({
+            error: false,
+            message: "Prerrequisito asociado con exito",
+            data: { idPrerrequisito },
+        });
+    } catch (error: any) {
+        if (error?.code === "ER_DUP_ENTRY") {
+            return res.status(409).json({
+                error: true,
+                message: "La asignatura ya tiene asociado ese prerrequisito",
+            });
+        }
+
+        console.error("Error al crear prerrequisito:", error);
+        return res.status(500).json({
+            error: true,
+            message: "Error interno al crear el prerrequisito",
+        });
+    }
+};
+
+export const consultarPrerrequisitos = async (req: Request, res: Response) => {
+    try {
+        const idAsignatura = parsePositiveInteger(req.params.idAsignatura);
+
+        if (!idAsignatura) {
+            return sendValidationError(res, "idAsignatura debe ser un numero entero mayor que cero");
+        }
+
+        const asignaturaExiste = await OfertaAcademica.existeAsignatura(idAsignatura);
+
+        if (!asignaturaExiste) {
+            return res.status(404).json({
+                error: true,
+                message: "No existe la asignatura indicada",
+            });
+        }
+
+        const [prerrequisitos, nombreAsignatura] = await Promise.all([
+            OfertaAcademica.consultarPrerrequisitosPorAsignatura(idAsignatura),
+            OfertaAcademica.consultarNombreAsignatura(idAsignatura),
+        ]);
+
+        return res.status(200).json({
+            error: false,
+            message: "Prerrequisitos consultados con exito",
+            data: {
+                asignatura: nombreAsignatura ?? prerrequisitos[0]?.asignatura ?? "",
+                prerrequisitos: prerrequisitos.map((item) => item.prerrequisito),
+                detalle: prerrequisitos,
+            },
+        });
+    } catch (error) {
+        console.error("Error al consultar prerrequisitos:", error);
+        return res.status(500).json({
+            error: true,
+            message: "Error interno al consultar prerrequisitos",
+        });
+    }
+};
+
 export const crearPensum = async (req: Request, res: Response) => {
     try {
         const { idPrograma, estado } = req.body;
@@ -128,7 +269,11 @@ export const crearPensum = async (req: Request, res: Response) => {
             return sendValidationError(res, "estado no puede estar vacio");
         }
 
-        const programaExiste = await OfertaAcademica.existePrograma(idPrograma);
+        const estadoPensum = isNonEmptyString(estado) ? estado.trim() : "Activo";
+        const [programaExiste, pensumDuplicado] = await Promise.all([
+            OfertaAcademica.existePrograma(idPrograma),
+            OfertaAcademica.existePensumPorProgramaYEstado(idPrograma, estadoPensum),
+        ]);
 
         if (!programaExiste) {
             return res.status(404).json({
@@ -137,9 +282,16 @@ export const crearPensum = async (req: Request, res: Response) => {
             });
         }
 
+        if (pensumDuplicado) {
+            return res.status(409).json({
+                error: true,
+                message: "Ya existe un pensum con ese estado para el programa indicado",
+            });
+        }
+
         const idPensum = await OfertaAcademica.crearPensum({
             idPrograma,
-            estado: isNonEmptyString(estado) ? estado.trim() : undefined,
+            estado: estadoPensum,
         });
 
         return res.status(201).json({
@@ -152,6 +304,24 @@ export const crearPensum = async (req: Request, res: Response) => {
         return res.status(500).json({
             error: true,
             message: "Error interno al crear el pensum",
+        });
+    }
+};
+
+export const consultarPensums = async (_req: Request, res: Response) => {
+    try {
+        const pensums = await OfertaAcademica.consultarPensums();
+
+        return res.status(200).json({
+            error: false,
+            message: "Pensums consultados con exito",
+            data: pensums,
+        });
+    } catch (error) {
+        console.error("Error al consultar pensums:", error);
+        return res.status(500).json({
+            error: true,
+            message: "Error interno al consultar pensums",
         });
     }
 };
@@ -169,9 +339,10 @@ export const asociarAsignaturaPensum = async (req: Request, res: Response) => {
             return sendValidationError(res, "idAsignatura debe ser un numero entero mayor que cero");
         }
 
-        const [pensumExiste, asignaturaExiste] = await Promise.all([
+        const [pensumExiste, asignaturaExiste, prerrequisitosFueraPensum] = await Promise.all([
             OfertaAcademica.existePensum(idPensum),
             OfertaAcademica.existeAsignatura(idAsignatura),
+            OfertaAcademica.consultarPrerrequisitosFueraDePensum(idPensum, idAsignatura),
         ]);
 
         if (!pensumExiste) {
@@ -185,6 +356,13 @@ export const asociarAsignaturaPensum = async (req: Request, res: Response) => {
             return res.status(404).json({
                 error: true,
                 message: "No existe una asignatura con el id indicado",
+            });
+        }
+
+        if (prerrequisitosFueraPensum.length > 0) {
+            return res.status(409).json({
+                error: true,
+                message: `La asignatura no es coherente con el pensum. Faltan prerrequisitos en el pensum: ${prerrequisitosFueraPensum.map((item) => item.nombre).join(", ")}`,
             });
         }
 
@@ -226,12 +404,39 @@ export const crearGrupo = async (req: Request, res: Response) => {
             return sendValidationError(res, "idAsignatura debe ser un numero entero mayor que cero");
         }
 
-        const asignaturaExiste = await OfertaAcademica.existeAsignatura(idAsignatura);
+        const [asignaturaExiste, asignaturaEnPensumActivo, prerrequisitosFueraPensumActivo, grupoDuplicado] =
+            await Promise.all([
+                OfertaAcademica.existeAsignatura(idAsignatura),
+                OfertaAcademica.existeAsignaturaEnPensumActivo(idAsignatura),
+                OfertaAcademica.consultarPrerrequisitosFueraDePensumActivo(idAsignatura),
+                OfertaAcademica.existeGrupoPorAsignaturaYNumero(idAsignatura, numGrupo),
+            ]);
 
         if (!asignaturaExiste) {
             return res.status(404).json({
                 error: true,
                 message: "No existe una asignatura con el id indicado",
+            });
+        }
+
+        if (!asignaturaEnPensumActivo) {
+            return res.status(409).json({
+                error: true,
+                message: "La asignatura no puede ofertarse porque no pertenece a ningun pensum activo",
+            });
+        }
+
+        if (prerrequisitosFueraPensumActivo.length > 0) {
+            return res.status(409).json({
+                error: true,
+                message: `Oferta invalida. Faltan prerrequisitos en pensum activo: ${prerrequisitosFueraPensumActivo.map((item) => item.nombre).join(", ")}`,
+            });
+        }
+
+        if (grupoDuplicado) {
+            return res.status(409).json({
+                error: true,
+                message: "Ya existe un grupo con ese numero para la asignatura indicada",
             });
         }
 
@@ -286,6 +491,10 @@ export const crearHorarioAula = async (req: Request, res: Response) => {
             return sendValidationError(res, "dia, horaInicio y horaFin son obligatorios");
         }
 
+        if (!isEndTimeAfterStartTime(horaInicio.trim(), horaFin.trim())) {
+            return sendValidationError(res, "horaFin debe ser mayor que horaInicio");
+        }
+
         if (!isPositiveInteger(piso)) {
             return sendValidationError(res, "piso debe ser un numero entero mayor que cero");
         }
@@ -298,12 +507,29 @@ export const crearHorarioAula = async (req: Request, res: Response) => {
             return sendValidationError(res, "aula no puede estar vacia");
         }
 
-        const grupoExiste = await OfertaAcademica.existeGrupo(idGrupo);
+        const [grupoExiste, horarioDuplicado] = await Promise.all([
+            OfertaAcademica.existeGrupo(idGrupo),
+            OfertaAcademica.existeHorarioDuplicado({
+                idGrupo,
+                dia: dia.trim(),
+                horaInicio: horaInicio.trim(),
+                horaFin: horaFin.trim(),
+                bloque: bloque.trim(),
+                aula: isNonEmptyString(aula) ? aula.trim() : undefined,
+            }),
+        ]);
 
         if (!grupoExiste) {
             return res.status(404).json({
                 error: true,
                 message: "No existe un grupo con el id indicado",
+            });
+        }
+
+        if (horarioDuplicado) {
+            return res.status(409).json({
+                error: true,
+                message: "Ya existe un horario igual para el grupo indicado",
             });
         }
 

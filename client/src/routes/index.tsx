@@ -17,12 +17,20 @@ function Home() {
           academico.
         </p>
 
-        <Link
-          to="/ManageUsers/"
-          className="mt-8 inline-flex rounded-2xl bg-[var(--brand-navy)] px-6 py-3 text-sm font-semibold text-white shadow-[0_18px_35px_rgba(15,46,90,0.28)] transition hover:-translate-y-0.5"
-        >
-          Ir a gestion de usuarios
-        </Link>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <Link
+            to="/ManageUsers"
+            className="inline-flex rounded-2xl bg-[var(--brand-navy)] px-6 py-3 text-sm font-semibold text-white shadow-[0_18px_35px_rgba(15,46,90,0.28)] transition hover:-translate-y-0.5"
+          >
+            Ir a gestion de usuarios
+          </Link>
+          <Link
+            to="/OfertaAcademica"
+            className="inline-flex rounded-2xl border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-800 transition hover:-translate-y-0.5"
+          >
+            Ir a oferta academica
+          </Link>
+        </div>
       </div>
     </div>
   )

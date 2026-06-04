@@ -10,11 +10,17 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as OfertaAcademicaIndexRouteImport } from './routes/OfertaAcademica/index'
 import { Route as ManageUsersIndexRouteImport } from './routes/ManageUsers/index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OfertaAcademicaIndexRoute = OfertaAcademicaIndexRouteImport.update({
+  id: '/OfertaAcademica/',
+  path: '/OfertaAcademica/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ManageUsersIndexRoute = ManageUsersIndexRouteImport.update({
@@ -26,27 +32,31 @@ const ManageUsersIndexRoute = ManageUsersIndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/ManageUsers/': typeof ManageUsersIndexRoute
+  '/OfertaAcademica/': typeof OfertaAcademicaIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/ManageUsers': typeof ManageUsersIndexRoute
+  '/OfertaAcademica': typeof OfertaAcademicaIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/ManageUsers/': typeof ManageUsersIndexRoute
+  '/OfertaAcademica/': typeof OfertaAcademicaIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/ManageUsers/'
+  fullPaths: '/' | '/ManageUsers/' | '/OfertaAcademica/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/ManageUsers'
-  id: '__root__' | '/' | '/ManageUsers/'
+  to: '/' | '/ManageUsers' | '/OfertaAcademica'
+  id: '__root__' | '/' | '/ManageUsers/' | '/OfertaAcademica/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ManageUsersIndexRoute: typeof ManageUsersIndexRoute
+  OfertaAcademicaIndexRoute: typeof OfertaAcademicaIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -56,6 +66,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/OfertaAcademica/': {
+      id: '/OfertaAcademica/'
+      path: '/OfertaAcademica'
+      fullPath: '/OfertaAcademica/'
+      preLoaderRoute: typeof OfertaAcademicaIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ManageUsers/': {
@@ -71,6 +88,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ManageUsersIndexRoute: ManageUsersIndexRoute,
+  OfertaAcademicaIndexRoute: OfertaAcademicaIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

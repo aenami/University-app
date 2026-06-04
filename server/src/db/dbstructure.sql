@@ -86,7 +86,7 @@ CREATE TABLE docente (
 -- ============================================================
 CREATE TABLE programa (
   id_programa    INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  nombre         VARCHAR(50)  NOT NULL,
+  nombre         VARCHAR(50)  NOT NULL UNIQUE,
   tipo_programa  ENUM('Carreras') NOT NULL,
   facultad       VARCHAR(50)  NOT NULL       -- desnormalizado intencionalmente
                                              -- (ver punto alternativo abajo)
@@ -137,7 +137,7 @@ CREATE TABLE beca (
 -- ============================================================
 CREATE TABLE asignatura (
   id_asignatura INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  nombre        VARCHAR(50) NOT NULL,
+  nombre        VARCHAR(50) NOT NULL UNIQUE,
   creditos      INT         NOT NULL
 );
 
@@ -150,7 +150,8 @@ CREATE TABLE prerrequisito (
   id_asignatura           INT UNSIGNED NOT NULL  COMMENT 'Asignatura que exige el prerrequisito',
   CONSTRAINT fk_pre_requisito  FOREIGN KEY (id_asignatura_requisito) REFERENCES asignatura(id_asignatura),
   CONSTRAINT fk_pre_asignatura FOREIGN KEY (id_asignatura)           REFERENCES asignatura(id_asignatura),
-  CONSTRAINT chk_no_self_pre   CHECK (id_asignatura != id_asignatura_requisito)
+  CONSTRAINT chk_no_self_pre   CHECK (id_asignatura != id_asignatura_requisito),
+  CONSTRAINT uq_prerrequisito_asignatura UNIQUE (id_asignatura, id_asignatura_requisito)
 );
 
 -- ============================================================
@@ -160,7 +161,8 @@ CREATE TABLE pensum (
   id_pensum   INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   id_programa INT UNSIGNED NOT NULL,
   estado      VARCHAR(20)  NOT NULL DEFAULT 'Activo',
-  CONSTRAINT fk_pensum_programa FOREIGN KEY (id_programa) REFERENCES programa(id_programa)
+  CONSTRAINT fk_pensum_programa FOREIGN KEY (id_programa) REFERENCES programa(id_programa),
+  CONSTRAINT uq_pensum_programa_estado UNIQUE (id_programa, estado)
 );
 
 -- ============================================================
@@ -205,7 +207,8 @@ CREATE TABLE grupo (
   num_grupo   INT          NOT NULL,
   cupo_maximo INT          NOT NULL,
   id_asignatura INT UNSIGNED NOT NULL,
-  CONSTRAINT fk_grupo_asignatura FOREIGN KEY (id_asignatura) REFERENCES asignatura(id_asignatura)
+  CONSTRAINT fk_grupo_asignatura FOREIGN KEY (id_asignatura) REFERENCES asignatura(id_asignatura),
+  CONSTRAINT uq_grupo_asignatura_numero UNIQUE (id_asignatura, num_grupo)
 );
 
 -- Ahora se puede cerrar la FK de aula → grupo

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.obtenerMatricula = exports.crearMatricula = void 0;
 const db_1 = require("../config/db");
+const validacionAcademica_service_js_1 = require("../services/validacionAcademica.service.js");
 // ============================================================
 // POST /matriculas
 // Guardar matrícula + detalle_matricula desde selección del estudiante
@@ -75,6 +76,16 @@ const crearMatricula = async (req, res) => {
             }
         }
         // ── 4. Calcular total de créditos ──────────────────────
+        const validacionAcademica = await (0, validacionAcademica_service_js_1.validarCoherenciaPrematricula)(id_estudiante, idsGrupos, connection);
+        if (!validacionAcademica.valido) {
+            await connection.rollback();
+            res.status(400).json({
+                ok: false,
+                mensaje: validacionAcademica.mensaje,
+                faltantes: validacionAcademica.faltantes ?? []
+            });
+            return;
+        }
         const totalCreditos = grupos.reduce((sum, g) => sum + g.creditos, 0);
         // ── 5. Calcular precio base (asumimos precio fijo por crédito) ─
         //       Ajusta PRECIO_POR_CREDITO según tu lógica de negocio

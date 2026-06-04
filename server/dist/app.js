@@ -16,6 +16,7 @@ const grupo_routes_js_1 = __importDefault(require("./routes/grupo.routes.js"));
 const corte_routes_js_1 = __importDefault(require("./routes/corte.routes.js"));
 const estudiantes_routes_js_1 = __importDefault(require("./routes/estudiantes.routes.js"));
 const users_routes_js_1 = __importDefault(require("./routes/users.routes.js"));
+const nota_routes_js_1 = __importDefault(require("./routes/nota.routes.js"));
 // ------- Settings de nuestro backend
 app.set('case sensitive Routing', true);
 app.set('appName', 'Express app');
@@ -33,4 +34,5 @@ app.use('/api/groups', grupo_routes_js_1.default);
 app.use('/api/cortes', corte_routes_js_1.default);
 app.use('/api/grupos', estudiantes_routes_js_1.default);
 app.use('/api/users', users_routes_js_1.default);
+app.use('/api/notas', nota_routes_js_1.default);
 exports.default = app;

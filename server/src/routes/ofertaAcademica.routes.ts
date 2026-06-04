@@ -4,12 +4,15 @@ import {
     consultarAsignaturas,
     consultarGrupos,
     consultarHorariosAulas,
+    consultarPensums,
+    consultarPrerrequisitos,
     consultarProgramas,
     crearAsignatura,
     crearGrupo,
     crearHorarioAula,
     crearPensum,
     crearPrograma,
+    crearPrerrequisito,
 } from "../controllers/ofertaAcademica.controller.js";
 
 const router = express.Router();
@@ -19,8 +22,11 @@ router.get("/programas", consultarProgramas);
 
 router.post("/asignaturas", crearAsignatura);
 router.get("/asignaturas", consultarAsignaturas);
+router.post("/asignaturas/:idAsignatura/prerrequisitos", crearPrerrequisito);
+router.get("/asignaturas/:idAsignatura/prerrequisitos", consultarPrerrequisitos);
 
 router.post("/pensums", crearPensum);
+router.get("/pensums", consultarPensums);
 router.post("/pensums/:idPensum/asignaturas", asociarAsignaturaPensum);
 
 router.post("/grupos", crearGrupo);
