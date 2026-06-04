@@ -1,0 +1,6 @@
+ALTER TABLE matricula
+ADD estado_matricula ENUM(
+    'PENDIENTE',
+    'APROBADA',
+    'RECHAZADA'
+) NOT NULL DEFAULT 'PENDIENTE';
