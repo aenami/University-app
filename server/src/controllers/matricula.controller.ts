@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { getConnection } from "../config/db.js";
 import { PoolConnection, RowDataPacket, ResultSetHeader } from "mysql2/promise";
+import { validarCoherenciaPrematricula } from "../services/validacionAcademica.service.js";
 import AuditLog from "../models/AuditLog.js";
 
 
@@ -127,6 +128,18 @@ export const crearMatricula = async (req: Request, res: Response): Promise<void>
         }
 
         // ── 4. Calcular total de créditos ──────────────────────
+        const validacionAcademica = await validarCoherenciaPrematricula(id_estudiante, idsGrupos, connection);
+
+        if (!validacionAcademica.valido) {
+            await connection.rollback();
+            res.status(400).json({
+                ok: false,
+                mensaje: validacionAcademica.mensaje,
+                faltantes: validacionAcademica.faltantes ?? []
+            });
+            return;
+        }
+
         const totalCreditos = grupos.reduce((sum, g) => sum + g.creditos, 0);
 
         // ── 5. Calcular precio base (asumimos precio fijo por crédito) ─

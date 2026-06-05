@@ -1,13 +1,22 @@
 import type { Request, Response } from 'express';
 import { getConnection } from '../config/db.js';
+import { validarCoherenciaPrematricula } from '../services/validacionAcademica.service.js';
 
 export const validarPrematricula = async (req: Request, res: Response) => {
 
     try {
 
-        const { grupos } = req.body;
+        const { grupos, idEstudiante, id_estudiante } = req.body;
+        const idEstudianteValidacion = Number(idEstudiante ?? id_estudiante);
 
         const db = getConnection();
+
+        if (!Array.isArray(grupos) || grupos.length === 0) {
+            return res.status(400).json({
+                error: true,
+                message: 'Debes seleccionar al menos un grupo'
+            });
+        }
 
         // =========================================
         // VALIDAR DUPLICIDAD DE ASIGNATURAS
@@ -23,6 +32,13 @@ export const validarPrematricula = async (req: Request, res: Response) => {
                 WHERE id_grupo = ?
             `, [idGrupo]);
 
+            if (!rows.length) {
+                return res.status(404).json({
+                    error: true,
+                    message: `El grupo ${idGrupo} no existe`
+                });
+            }
+
             const idAsignatura = rows[0].id_asignatura;
 
             if (asignaturas.has(idAsignatura)) {
@@ -34,6 +50,18 @@ export const validarPrematricula = async (req: Request, res: Response) => {
             }
 
             asignaturas.add(idAsignatura);
+        }
+
+        if (Number.isInteger(idEstudianteValidacion) && idEstudianteValidacion > 0) {
+            const validacionAcademica = await validarCoherenciaPrematricula(idEstudianteValidacion, grupos);
+
+            if (!validacionAcademica.valido) {
+                return res.status(400).json({
+                    error: true,
+                    message: validacionAcademica.mensaje,
+                    faltantes: validacionAcademica.faltantes ?? []
+                });
+            }
         }
 
         // =========================================
@@ -54,6 +82,13 @@ export const validarPrematricula = async (req: Request, res: Response) => {
             `, [idGrupo]);
 
             const grupo = rows[0];
+
+            if (!grupo) {
+                return res.status(404).json({
+                    error: true,
+                    message: `El grupo ${idGrupo} no existe`
+                });
+            }
 
             if (grupo.ocupados >= grupo.cupo_maximo) {
 
